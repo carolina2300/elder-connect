@@ -5,7 +5,7 @@ Real JWT tokens. Every protected endpoint validates the Bearer token and populat
 
 ## Classes to create
 
-### `JwtService` — `pt.lacosenior.backend.auth.JwtService`
+### `JwtService` — `pt.eldercare.backend.auth.JwtService`
 
 ```java
 @Service
@@ -48,7 +48,7 @@ public class JwtService {
 }
 ```
 
-### `JwtAuthFilter` — `pt.lacosenior.backend.auth.JwtAuthFilter`
+### `JwtAuthFilter` — `pt.eldercare.backend.auth.JwtAuthFilter`
 
 ```java
 @Component
@@ -63,7 +63,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 }
 ```
 
-### `SecurityConfig` — `pt.lacosenior.backend.config.SecurityConfig`
+### `SecurityConfig` — `pt.eldercare.backend.config.SecurityConfig`
 
 ```java
 @Configuration

@@ -50,13 +50,13 @@ Errors:
 public record AuthResponse(UserDto user, String token) {}
 ```
 
-### `AuthService` — `pt.lacosenior.backend.auth.AuthService`
+### `AuthService` — `pt.eldercare.backend.auth.AuthService`
 - `register(RegisterRequest)`: check email unique, BCrypt hash password, save User, issue token, return AuthResponse.
 - `login(LoginRequest)`: find user by email, `BCryptPasswordEncoder.matches()`, issue token, return AuthResponse.
 - Inject `PasswordEncoder` bean (declare in a `@Configuration` class).
 - For now, token = `JwtService.issue(userId)` — implement `JwtService` stub that returns `"todo-jwt"` until Task 06.
 
-### `AuthController` — `pt.lacosenior.backend.auth.AuthController`
+### `AuthController` — `pt.eldercare.backend.auth.AuthController`
 ```java
 @RestController
 @RequestMapping("/api/v1/auth")

@@ -45,7 +45,7 @@ public interface PostRepository extends JpaRepository<Post, UUID>,
     JpaSpecificationExecutor<Post> {}
 ```
 
-### `PostSpec` — `pt.lacosenior.backend.post.PostSpec`
+### `PostSpec` — `pt.eldercare.backend.post.PostSpec`
 Static factory methods returning `Specification<Post>`:
 ```java
 public class PostSpec {

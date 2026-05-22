@@ -79,7 +79,7 @@ public record DurationDto(int amount, DurationUnit unit) {}
 public record TimeSlotDto(String startTime, String endTime) {}
 ```
 
-### `PostService` — `pt.lacosenior.backend.post.PostService`
+### `PostService` — `pt.eldercare.backend.post.PostService`
 - `create(UUID authorId, CreatePostRequest req)` → PostDto
   - Load `User` by authorId.
   - Build `Post` entity from request.
@@ -88,7 +88,7 @@ public record TimeSlotDto(String startTime, String endTime) {}
   - Return `PostMapper.toDto(post)`.
 - `getById(UUID id)` → PostDto (throws 404 if missing).
 
-### `PostController` — `pt.lacosenior.backend.post.PostController`
+### `PostController` — `pt.eldercare.backend.post.PostController`
 ```java
 @RestController
 @RequestMapping("/api/v1/posts")

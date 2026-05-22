@@ -28,7 +28,7 @@ databaseChangeLog:
 ## Liquibase rules
 - **Never edit a deployed changeset.** Add new changesets (e.g. `002-add-column.sql`) for schema changes.
 - Liquibase tracks applied changesets in `databasechangelog` table — Supabase will show this table; ignore it.
-- Each changeset gets a unique `id` (the `lacosenior:001-...` string). Keep ids stable.
+- Each changeset gets a unique `id` (the `eldercare:001-...` string). Keep ids stable.
 - The `--rollback` block documents how to undo manually; Liquibase uses it for `rollbackCount`.
 
 ## Acceptance Criteria

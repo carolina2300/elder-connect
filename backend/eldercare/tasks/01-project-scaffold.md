@@ -9,7 +9,7 @@ Bootstrap the Spring Boot Maven project with all required dependencies. No busin
    - **Project:** Maven
    - **Language:** Java 25
    - **Spring Boot:** 4.x (latest stable)
-   - **Group:** `pt.lacosenior`
+   - **Group:** `pt.eldercare`
    - **Artifact:** `backend`
    - **Packaging:** Jar
    - **Dependencies:**

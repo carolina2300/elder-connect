@@ -57,7 +57,7 @@ Use a `PATCH` semantic: distinguish "field absent" from "field = null". Options:
 - Or accept `Map<String, Object>` and merge manually.
 - Simplest: accept `UpdateMeRequest` and treat any non-null string value as "update".
 
-### `UserController` — `pt.lacosenior.backend.user.UserController`
+### `UserController` — `pt.eldercare.backend.user.UserController`
 ```java
 @RestController
 @RequestMapping("/api/v1")
@@ -68,7 +68,7 @@ public class UserController {
 }
 ```
 
-### `UserService` — `pt.lacosenior.backend.user.UserService`
+### `UserService` — `pt.eldercare.backend.user.UserService`
 - `getMe(UUID userId)` → UserDto
 - `getUser(UUID id)` → UserDto (throws 404 if not found)
 - `updateMe(UUID userId, UpdateMeRequest body)` → UserDto

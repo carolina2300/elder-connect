@@ -45,7 +45,7 @@ Rules:
 public record SendMessageRequest(@NotBlank String body) {}
 ```
 
-### `MessageService` — `pt.lacosenior.backend.conversation.MessageService`
+### `MessageService` — `pt.eldercare.backend.conversation.MessageService`
 ```java
 public class MessageService {
 

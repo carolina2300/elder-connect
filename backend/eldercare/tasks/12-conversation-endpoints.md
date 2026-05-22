@@ -39,7 +39,7 @@ Rules (from MSW):
 public record StartConversationRequest(@NotNull UUID participantId) {}
 ```
 
-### `ConversationService` — `pt.lacosenior.backend.conversation.ConversationService`
+### `ConversationService` — `pt.eldercare.backend.conversation.ConversationService`
 ```java
 public class ConversationService {
 

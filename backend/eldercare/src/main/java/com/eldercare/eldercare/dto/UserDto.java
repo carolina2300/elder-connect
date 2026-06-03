@@ -3,9 +3,10 @@ package com.eldercare.eldercare.dto;
 import com.eldercare.eldercare.model.UserType;
 
 import java.time.Instant;
+import java.util.UUID;
 
 public record UserDto(
-        Long id,
+        UUID id,
         String email,
         String name,
         String description,

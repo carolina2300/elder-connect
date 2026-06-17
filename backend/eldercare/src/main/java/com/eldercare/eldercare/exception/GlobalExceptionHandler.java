@@ -22,4 +22,11 @@ public class GlobalExceptionHandler {
         problem.setTitle("Credenciais inválidas");
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(problem);
     }
+
+    @ExceptionHandler(PostNotFoundException.class)
+    public ResponseEntity<ProblemDetail> handlePostNotFound(PostNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setTitle("Post não encontrado");
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(problem);
+    }
 }

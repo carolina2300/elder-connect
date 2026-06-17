@@ -16,8 +16,8 @@ export default function Conversations() {
 
       const otherIds = [
         ...new Set(
-          data.flatMap((c: Conversation) =>
-            c.participantIds.filter((id) => id !== user?.id)
+          data.map((c: Conversation) =>
+            c.participantAId === user?.id ? c.participantBId : c.participantAId
           )
         ),
       ] as string[];
@@ -41,7 +41,7 @@ export default function Conversations() {
       ) : (
         <div className="flex flex-col gap-2">
           {conversations.map((c) => {
-            const otherId = c.participantIds.find((id) => id !== user?.id) ?? '';
+            const otherId = c.participantAId === user?.id ? c.participantBId : c.participantAId;
             const other = users[otherId];
             return (
               <Link

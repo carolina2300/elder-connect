@@ -21,9 +21,9 @@ export default function Chat() {
 
   useEffect(() => {
     api.get('/api/conversations').then(({ data }) => {
-      const conv = data.find((c: { id: string; participantIds: string[] }) => c.id === id);
+      const conv = data.find((c: { id: string; participantAId: string; participantBId: string }) => c.id === id);
       if (!conv) { navigate('/conversations'); return; }
-      const otherId = conv.participantIds.find((pid: string) => pid !== user?.id);
+      const otherId = conv.participantAId === user?.id ? conv.participantBId : conv.participantAId;
       if (otherId) api.get(`/api/users/${otherId}`).then((r) => setOther(r.data));
     });
 

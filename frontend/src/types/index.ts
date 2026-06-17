@@ -86,7 +86,9 @@ export interface Message {
 
 export interface Conversation {
   id: string;
-  participantIds: string[];
+  participantAId: string;
+  participantBId: string;
+  createdAt: string;
   lastMessage?: Message;
 }
 

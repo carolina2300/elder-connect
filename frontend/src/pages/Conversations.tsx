@@ -33,13 +33,13 @@ export default function Conversations() {
   if (loading) return <div className="text-center py-20 text-gray-400">Loading…</div>;
 
   return (
-    <div className="max-w-xl mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">Messages</h1>
+    <div className="max-w-xl mx-auto px-6 py-10">
+      <h1 className="text-2xl font-bold text-gray-900 mb-8">Messages</h1>
 
       {conversations.length === 0 ? (
         <div className="text-center text-gray-400 py-20">No conversations yet.</div>
       ) : (
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-3">
           {conversations.map((c) => {
             const otherId = c.participantAId === user?.id ? c.participantBId : c.participantAId;
             const other = users[otherId];
@@ -47,7 +47,7 @@ export default function Conversations() {
               <Link
                 key={c.id}
                 to={`/conversations/${c.id}`}
-                className="flex items-center gap-3 bg-white border border-gray-100 rounded-2xl p-4 hover:shadow-sm transition-shadow"
+                className="flex items-center gap-4 bg-white border border-gray-100 rounded-2xl p-5 hover:shadow-sm transition-shadow"
               >
                 {other?.photo ? (
                   <img src={other.photo} className="w-10 h-10 rounded-full object-cover" alt="" />

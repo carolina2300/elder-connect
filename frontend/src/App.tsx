@@ -15,22 +15,26 @@ import UserProfile from './pages/UserProfile';
 export default function App() {
   return (
     <BrowserRouter>
-      <Navbar />
-      <Routes>
-        <Route path="/" element={<Landing />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+      <div className="flex flex-col h-screen overflow-hidden">
+        <Navbar />
+        <main className="flex-1 overflow-y-auto min-h-0">
+          <Routes>
+            <Route path="/" element={<Landing />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
 
-        <Route element={<ProtectedRoute />}>
-          <Route path="/posts" element={<Posts />} />
-          <Route path="/posts/create" element={<CreatePost />} />
-          <Route path="/posts/:id" element={<PostDetail />} />
-          <Route path="/conversations" element={<Conversations />} />
-          <Route path="/conversations/:id" element={<Chat />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/users/:id" element={<UserProfile />} />
-        </Route>
-      </Routes>
+            <Route element={<ProtectedRoute />}>
+              <Route path="/posts" element={<Posts />} />
+              <Route path="/posts/create" element={<CreatePost />} />
+              <Route path="/posts/:id" element={<PostDetail />} />
+              <Route path="/conversations" element={<Conversations />} />
+              <Route path="/conversations/:id" element={<Chat />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/users/:id" element={<UserProfile />} />
+            </Route>
+          </Routes>
+        </main>
+      </div>
     </BrowserRouter>
   );
 }

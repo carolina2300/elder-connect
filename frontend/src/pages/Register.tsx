@@ -30,8 +30,8 @@ export default function Register() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 w-full max-w-md">
+    <div className="bg-gray-50 px-4 py-20 flex items-start justify-center">
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-10 w-full max-w-md">
         <h1 className="text-2xl font-bold text-gray-900 mb-1">Create account</h1>
         <p className="text-sm text-gray-500 mb-6">Join the ElderCare community</p>
 
@@ -39,7 +39,7 @@ export default function Register() {
           <div className="bg-red-50 text-red-600 text-sm rounded-lg px-4 py-3 mb-4">{error}</div>
         )}
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-5">
           <div className="grid grid-cols-2 gap-2">
             <button
               type="button"

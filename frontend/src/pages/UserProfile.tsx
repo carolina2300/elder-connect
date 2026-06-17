@@ -75,7 +75,7 @@ export default function UserProfile() {
     : null;
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-8">
+    <div className="max-w-2xl mx-auto px-6 py-10">
       <button
         onClick={() => navigate(-1)}
         className="text-sm text-gray-400 hover:text-gray-600 mb-6 flex items-center gap-1"

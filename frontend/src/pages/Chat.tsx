@@ -50,7 +50,7 @@ export default function Chat() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-8 flex flex-col h-[calc(100vh-64px)]">
+    <div className="max-w-2xl mx-auto px-6 py-6 flex flex-col h-full">
       <div className="flex items-center gap-3 mb-4">
         <button
           onClick={() => navigate('/conversations')}
@@ -68,7 +68,7 @@ export default function Chat() {
         <span className="font-semibold text-gray-800">{other?.name ?? 'Chat'}</span>
       </div>
 
-      <div className="flex-1 overflow-y-auto flex flex-col gap-3 py-2">
+      <div className="flex-1 min-h-0 overflow-y-auto flex flex-col gap-3 py-2">
         {messages.map((m) => {
           const isMe = m.senderId === user?.id;
           return (

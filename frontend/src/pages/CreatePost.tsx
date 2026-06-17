@@ -85,7 +85,7 @@ export default function CreatePost() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-8">
+    <div className="max-w-2xl mx-auto px-6 py-10">
       <button
         onClick={() => navigate(-1)}
         className="text-sm text-gray-400 hover:text-gray-600 mb-6 flex items-center gap-1"
@@ -101,7 +101,7 @@ export default function CreatePost() {
         <div className="bg-red-50 text-red-600 text-sm rounded-lg px-4 py-3 mb-4">{error}</div>
       )}
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-6">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
           <textarea

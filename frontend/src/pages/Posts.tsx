@@ -28,11 +28,11 @@ function PostCard({ post }: { post: Post }) {
   return (
     <Link
       to={`/posts/${post.id}`}
-      className="bg-white border border-gray-100 rounded-2xl p-5 hover:shadow-md transition-shadow flex flex-col gap-3"
+      className="bg-white border border-gray-100 rounded-2xl p-6 hover:shadow-md transition-shadow flex flex-col gap-4"
     >
       <div className="flex items-center justify-between">
         <span
-          className={`text-xs font-semibold px-2 py-1 rounded-full ${
+          className={`text-xs font-semibold px-3 py-1 rounded-full ${
             post.kind === 'CAREGIVER'
               ? 'bg-emerald-100 text-emerald-700'
               : 'bg-blue-100 text-blue-700'
@@ -56,7 +56,7 @@ function PostCard({ post }: { post: Post }) {
         {qualifications && qualifications.length > 0 && (
           <div className="flex gap-1 flex-wrap justify-end">
             {qualifications.slice(0, 2).map((q) => (
-              <span key={q} className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">
+              <span key={q} className="text-xs bg-gray-100 text-gray-600 px-3 py-1 rounded-full">
                 {QUALIFICATION_LABELS[q]}
               </span>
             ))}
@@ -105,21 +105,21 @@ export default function Posts() {
   const isMyPosts = authorFilter === 'me';
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8">
-      <div className="flex items-center justify-between mb-6">
+    <div className="max-w-4xl mx-auto px-6 py-10">
+      <div className="flex items-center justify-between mb-8">
         <h1 className="text-2xl font-bold text-gray-900">
           {isMyPosts ? 'My Posts' : 'Care Feed'}
         </h1>
         <button
           onClick={() => navigate('/posts/create')}
-          className="bg-emerald-600 text-white text-sm font-semibold px-4 py-2 rounded-xl hover:bg-emerald-700 transition-colors"
+          className="bg-emerald-600 text-white text-sm font-semibold px-5 py-2.5 rounded-xl hover:bg-emerald-700 transition-colors"
         >
           {user?.userType === 'CARE_GIVER' ? '+ Offer Services' : '+ Post Care Need'}
         </button>
       </div>
 
       {!isMyPosts && (
-        <div className="flex gap-2 mb-6">
+        <div className="flex gap-2 mb-8">
           {(['all', 'CAREGIVER', 'CARETAKER'] as const).map((k) => (
             <button
               key={k}
@@ -141,7 +141,7 @@ export default function Posts() {
       ) : filtered.length === 0 ? (
         <div className="text-center text-gray-400 py-20">No posts found.</div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
           {filtered.map((p) => (
             <PostCard key={p.id} post={p} />
           ))}

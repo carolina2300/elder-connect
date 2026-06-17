@@ -33,8 +33,8 @@ export default function Profile() {
   }
 
   return (
-    <div className="max-w-xl mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">Edit Profile</h1>
+    <div className="max-w-xl mx-auto px-6 py-10">
+      <h1 className="text-2xl font-bold text-gray-900 mb-8">Edit Profile</h1>
 
       <div className="flex items-center gap-4 mb-8">
         {photo ? (
@@ -61,7 +61,7 @@ export default function Profile() {
         <div className="bg-red-50 text-red-600 text-sm rounded-lg px-4 py-3 mb-4">{error}</div>
       )}
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-5">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Full name</label>
           <input

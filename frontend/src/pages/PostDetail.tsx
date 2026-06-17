@@ -61,7 +61,7 @@ export default function PostDetail() {
   const priceUnit = post.priceRange.unit.replace('PER_', '/').toLowerCase();
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-8">
+    <div className="max-w-2xl mx-auto px-6 py-10">
       <button
         onClick={() => navigate(-1)}
         className="text-sm text-gray-400 hover:text-gray-600 mb-6 flex items-center gap-1"
@@ -69,7 +69,7 @@ export default function PostDetail() {
         ← Back
       </button>
 
-      <div className="bg-white rounded-2xl border border-gray-100 p-6 flex flex-col gap-5">
+      <div className="bg-white rounded-2xl border border-gray-100 p-8 flex flex-col gap-6">
         <div className="flex items-center justify-between">
           <span
             className={`text-xs font-semibold px-2 py-1 rounded-full ${
@@ -87,7 +87,7 @@ export default function PostDetail() {
 
         <p className="text-gray-700">{post.description}</p>
 
-        <div className="grid grid-cols-2 gap-3 text-sm">
+        <div className="grid grid-cols-2 gap-4 text-sm">
           <div className="bg-gray-50 rounded-xl p-3">
             <div className="text-xs text-gray-400 mb-1">Location</div>
             <div className="font-medium text-gray-800">

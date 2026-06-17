@@ -27,17 +27,17 @@ export default function Conversations() {
       );
       setUsers(Object.fromEntries(userEntries));
       setLoading(false);
-    });
+    }).catch(() => setLoading(false));
   }, []);
 
-  if (loading) return <div className="text-center py-20 text-gray-400">Loading…</div>;
+  if (loading) return <div className="text-center py-20 text-[#7fa890] font-['Plus_Jakarta_Sans',sans-serif]">Loading…</div>;
 
   return (
-    <div className="max-w-xl mx-auto px-6 py-10">
-      <h1 className="text-2xl font-bold text-gray-900 mb-8">Messages</h1>
+    <div className="max-w-xl mx-auto px-6 py-10 font-['Plus_Jakarta_Sans',sans-serif]">
+      <h1 className="text-2xl font-extrabold text-[#1d3327] tracking-tight mb-8">Messages</h1>
 
       {conversations.length === 0 ? (
-        <div className="text-center text-gray-400 py-20">No conversations yet.</div>
+        <div className="text-center text-[#7fa890] py-20">No conversations yet.</div>
       ) : (
         <div className="flex flex-col gap-3">
           {conversations.map((c) => {
@@ -47,23 +47,23 @@ export default function Conversations() {
               <Link
                 key={c.id}
                 to={`/conversations/${c.id}`}
-                className="flex items-center gap-4 bg-white border border-gray-100 rounded-2xl p-5 hover:shadow-sm transition-shadow"
+                className="flex items-center gap-4 bg-white border border-[#e4eee7] rounded-3xl p-5 hover:shadow-[0_10px_30px_rgba(74,157,114,0.12)] transition-shadow"
               >
                 {other?.photo ? (
-                  <img src={other.photo} className="w-10 h-10 rounded-full object-cover" alt="" />
+                  <img src={other.photo} className="w-11 h-11 rounded-full object-cover" alt="" />
                 ) : (
-                  <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 font-bold flex-shrink-0">
+                  <div className="w-11 h-11 rounded-full bg-[#dcecdf] flex items-center justify-center text-[#3f8c5f] font-bold flex-shrink-0">
                     {other?.name?.[0] ?? '?'}
                   </div>
                 )}
                 <div className="flex-1 min-w-0">
-                  <div className="font-medium text-gray-800 text-sm">{other?.name ?? 'User'}</div>
+                  <div className="font-bold text-[#1d3327] text-sm">{other?.name ?? 'User'}</div>
                   {c.lastMessage && (
-                    <div className="text-xs text-gray-400 truncate">{c.lastMessage.body}</div>
+                    <div className="text-xs text-[#7fa890] truncate mt-0.5">{c.lastMessage.body}</div>
                   )}
                 </div>
                 {c.lastMessage && (
-                  <div className="text-xs text-gray-300 flex-shrink-0">
+                  <div className="text-xs text-[#9bb0a4] flex-shrink-0">
                     {new Date(c.lastMessage.sentAt).toLocaleDateString()}
                   </div>
                 )}

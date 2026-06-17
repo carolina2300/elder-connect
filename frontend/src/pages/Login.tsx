@@ -26,52 +26,55 @@ export default function Login() {
     }
   }
 
+  const inputClass =
+    "w-full bg-white border border-[#e4eee7] rounded-xl px-3.5 py-2.5 text-sm text-[#1d3327] placeholder:text-[#9bb0a4] focus:outline-none focus:ring-2 focus:ring-[#4a9d72] focus:border-transparent transition";
+
   return (
-    <div className="bg-gray-50 px-4 py-20 flex items-start justify-center">
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-10 w-full max-w-md">
-        <h1 className="text-2xl font-bold text-gray-900 mb-1">Welcome back</h1>
-        <p className="text-sm text-gray-500 mb-6">Sign in to your account</p>
-
-        {error && (
-          <div className="bg-red-50 text-red-600 text-sm rounded-lg px-4 py-3 mb-4">{error}</div>
-        )}
-
-        <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-            <input
-              type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
-            />
+    <div className="bg-[#eef5ef] min-h-screen px-4 py-20 flex items-start justify-center font-['Plus_Jakarta_Sans',sans-serif]">
+      <div className="w-full max-w-md">
+        <div className="flex items-center gap-2.5 justify-center mb-8">
+          <div className="w-9 h-9 rounded-xl bg-[#4a9d72] flex items-center justify-center text-[#eaf5ee]">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+              <path d="M12 21c0-6 3-10 8-11-1 6-4 9-8 11z" />
+              <path d="M12 21c0-5-2-8-6-9 1 5 3 7 6 9z" />
+            </svg>
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
-            <input
-              type="password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
-            />
-          </div>
-          <button
-            type="submit"
-            disabled={loading}
-            className="bg-emerald-600 text-white py-2 rounded-lg font-semibold hover:bg-emerald-700 transition-colors disabled:opacity-50"
-          >
-            {loading ? 'Signing in…' : 'Sign in'}
-          </button>
-        </form>
+          <span className="text-lg font-extrabold tracking-tight text-[#234034]">ElderCare Connect</span>
+        </div>
 
-        <p className="text-sm text-center text-gray-500 mt-6">
-          No account?{' '}
-          <Link to="/register" className="text-emerald-600 font-medium hover:underline">
-            Register
-          </Link>
-        </p>
+        <div className="bg-white rounded-3xl shadow-[0_10px_40px_rgba(74,157,114,0.08)] border border-[#e4eee7] p-10">
+          <h1 className="text-2xl font-extrabold text-[#1d3327] tracking-tight mb-1">Welcome back</h1>
+          <p className="text-sm text-[#7fa890] mb-6">Sign in to your account</p>
+
+          {error && (
+            <div className="bg-[#fbe9e7] text-[#b3493a] text-sm font-medium rounded-xl px-4 py-3 mb-4">{error}</div>
+          )}
+
+          <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+            <div>
+              <label className="block text-sm font-semibold text-[#2f4339] mb-1.5">Email</label>
+              <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className={inputClass} />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-[#2f4339] mb-1.5">Password</label>
+              <input type="password" required value={password} onChange={(e) => setPassword(e.target.value)} className={inputClass} />
+            </div>
+            <button
+              type="submit"
+              disabled={loading}
+              className="bg-[#4a9d72] text-white py-3 rounded-full font-bold hover:bg-[#41895f] transition-colors disabled:opacity-50 mt-1"
+            >
+              {loading ? 'Signing in…' : 'Sign in'}
+            </button>
+          </form>
+
+          <p className="text-sm text-center text-[#4f6258] mt-6">
+            No account?{' '}
+            <Link to="/register" className="text-[#3f8c5f] font-bold hover:underline">
+              Register
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );

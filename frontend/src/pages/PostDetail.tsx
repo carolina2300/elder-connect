@@ -24,13 +24,20 @@ export default function PostDetail() {
   const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
-    api.get(`/api/posts/${id}`).then(({ data }) => {
-      setPost(data);
-      return api.get(`/api/users/${data.authorId}`);
-    }).then(({ data }) => {
-      setAuthor(data);
-      setLoading(false);
-    }).catch(() => navigate('/posts'));
+    async function load() {
+      try {
+        const { data: post } = await api.get(`/api/posts/${id}`);
+        setPost(post);
+        if (post.authorId) {
+          const { data: author } = await api.get(`/api/users/${post.authorId}`);
+          setAuthor(author);
+        }
+        setLoading(false);
+      } catch {
+        navigate('/posts');
+      }
+    }
+    load();
   }, [id]);
 
   async function handleDelete() {
@@ -46,11 +53,15 @@ export default function PostDetail() {
 
   async function handleContact() {
     if (!author) return;
-    const { data } = await api.post(`/api/conversations?with=${author.id}`);
-    navigate(`/conversations/${data.id}`);
+    try {
+      const { data } = await api.post(`/api/conversations?with=${author.id}`);
+      navigate(`/conversations/${data.id}`);
+    } catch {
+      alert('Could not start conversation. Please try again.');
+    }
   }
 
-  if (loading) return <div className="text-center py-20 text-gray-400">Loading…</div>;
+  if (loading) return <div className="text-center py-20 text-[#7fa890] font-['Plus_Jakarta_Sans',sans-serif]">Loading…</div>;
   if (!post) return null;
 
   const qualifications =
@@ -61,76 +72,79 @@ export default function PostDetail() {
   const priceUnit = post.priceRange.unit.replace('PER_', '/').toLowerCase();
 
   return (
-    <div className="max-w-2xl mx-auto px-6 py-10">
+    <div className="max-w-2xl mx-auto px-6 py-10 font-['Plus_Jakarta_Sans',sans-serif]">
       <button
         onClick={() => navigate(-1)}
-        className="text-sm text-gray-400 hover:text-gray-600 mb-6 flex items-center gap-1"
+        className="text-sm font-semibold text-[#4f6258] hover:text-[#234034] mb-6 flex items-center gap-1.5 transition-colors"
       >
-        ← Back
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
+          <path d="M15 18l-6-6 6-6" />
+        </svg>
+        Back
       </button>
 
-      <div className="bg-white rounded-2xl border border-gray-100 p-8 flex flex-col gap-6">
+      <div className="bg-white rounded-3xl border border-[#e4eee7] p-8 flex flex-col gap-6">
         <div className="flex items-center justify-between">
           <span
-            className={`text-xs font-semibold px-2 py-1 rounded-full ${
+            className={`text-xs font-bold px-3 py-1 rounded-full ${
               post.kind === 'CAREGIVER'
-                ? 'bg-emerald-100 text-emerald-700'
-                : 'bg-blue-100 text-blue-700'
+                ? 'bg-[#dcecdf] text-[#3f8c5f]'
+                : 'bg-[#e2ecf3] text-[#3f6f9c]'
             }`}
           >
             {post.kind === 'CAREGIVER' ? 'Caregiver Offer' : 'Seeking Care'}
           </span>
-          <span className="text-xs text-gray-400">
+          <span className="text-xs text-[#9bb0a4]">
             {new Date(post.createdAt).toLocaleDateString()}
           </span>
         </div>
 
-        <p className="text-gray-700">{post.description}</p>
+        <p className="text-[#2f4339] leading-relaxed">{post.description}</p>
 
-        <div className="grid grid-cols-2 gap-4 text-sm">
-          <div className="bg-gray-50 rounded-xl p-3">
-            <div className="text-xs text-gray-400 mb-1">Location</div>
-            <div className="font-medium text-gray-800">
+        <div className="grid grid-cols-2 gap-3 text-sm">
+          <div className="bg-[#eef5ef] rounded-2xl p-4">
+            <div className="text-xs text-[#7fa890] mb-1">Location</div>
+            <div className="font-bold text-[#234034]">
               {post.location.freguesia}, {post.location.concelho}
             </div>
-            <div className="text-gray-500">{post.location.distrito}</div>
+            <div className="text-[#4f6258]">{post.location.distrito}</div>
           </div>
-          <div className="bg-gray-50 rounded-xl p-3">
-            <div className="text-xs text-gray-400 mb-1">Price</div>
-            <div className="font-medium text-emerald-700">
+          <div className="bg-[#eef5ef] rounded-2xl p-4">
+            <div className="text-xs text-[#7fa890] mb-1">Price</div>
+            <div className="font-bold text-[#3f8c5f]">
               €{priceMin}–€{priceMax} {priceUnit}
             </div>
           </div>
-          <div className="bg-gray-50 rounded-xl p-3">
-            <div className="text-xs text-gray-400 mb-1">Duration</div>
-            <div className="font-medium text-gray-800">
+          <div className="bg-[#eef5ef] rounded-2xl p-4">
+            <div className="text-xs text-[#7fa890] mb-1">Duration</div>
+            <div className="font-bold text-[#234034]">
               {post.duration.amount} {post.duration.unit.toLowerCase()}(s)
             </div>
           </div>
           {post.kind === 'CARETAKER' && post.startDate && (
-            <div className="bg-gray-50 rounded-xl p-3">
-              <div className="text-xs text-gray-400 mb-1">Period</div>
-              <div className="font-medium text-gray-800">
+            <div className="bg-[#eef5ef] rounded-2xl p-4">
+              <div className="text-xs text-[#7fa890] mb-1">Period</div>
+              <div className="font-bold text-[#234034]">
                 {post.startDate} → {post.endDate}
               </div>
             </div>
           )}
           {post.kind === 'CAREGIVER' && post.earliestStartDate && (
-            <div className="bg-gray-50 rounded-xl p-3">
-              <div className="text-xs text-gray-400 mb-1">Available from</div>
-              <div className="font-medium text-gray-800">{post.earliestStartDate}</div>
+            <div className="bg-[#eef5ef] rounded-2xl p-4">
+              <div className="text-xs text-[#7fa890] mb-1">Available from</div>
+              <div className="font-bold text-[#234034]">{post.earliestStartDate}</div>
             </div>
           )}
         </div>
 
         {qualifications && qualifications.length > 0 && (
           <div>
-            <div className="text-xs text-gray-400 mb-2">
+            <div className="text-xs text-[#7fa890] mb-2">
               {post.kind === 'CAREGIVER' ? 'Services offered' : 'Services needed'}
             </div>
             <div className="flex flex-wrap gap-2">
               {qualifications.map((q) => (
-                <span key={q} className="text-xs bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full font-medium">
+                <span key={q} className="text-xs bg-[#dcecdf] text-[#3f8c5f] px-3 py-1 rounded-full font-semibold">
                   {QUALIFICATION_LABELS[q]}
                 </span>
               ))}
@@ -141,18 +155,18 @@ export default function PostDetail() {
         {author && (
           <Link
             to={`/users/${author.id}`}
-            className="flex items-center gap-3 border-t border-gray-100 pt-4 hover:bg-gray-50 rounded-xl p-2 -mx-2 transition-colors"
+            className="flex items-center gap-3 border-t border-[#e4eee7] pt-4 hover:bg-[#eef5ef] rounded-2xl p-3 -mx-3 transition-colors"
           >
             {author.photo ? (
-              <img src={author.photo} className="w-10 h-10 rounded-full object-cover" alt="" />
+              <img src={author.photo} className="w-11 h-11 rounded-full object-cover" alt="" />
             ) : (
-              <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 font-bold">
+              <div className="w-11 h-11 rounded-full bg-[#dcecdf] flex items-center justify-center text-[#3f8c5f] font-bold">
                 {author.name[0]}
               </div>
             )}
             <div>
-              <div className="font-medium text-gray-800 text-sm">{author.name}</div>
-              <div className="text-xs text-gray-400">View profile →</div>
+              <div className="font-bold text-[#234034] text-sm">{author.name}</div>
+              <div className="text-xs text-[#7fa890]">View profile →</div>
             </div>
           </Link>
         )}
@@ -161,7 +175,7 @@ export default function PostDetail() {
           {!isOwner && (
             <button
               onClick={handleContact}
-              className="flex-1 bg-emerald-600 text-white py-2 rounded-xl font-semibold text-sm hover:bg-emerald-700 transition-colors"
+              className="flex-1 bg-[#4a9d72] text-white py-3 rounded-full font-bold text-sm hover:bg-[#41895f] transition-colors"
             >
               Contact
             </button>
@@ -170,7 +184,7 @@ export default function PostDetail() {
             <button
               onClick={handleDelete}
               disabled={deleting}
-              className="flex-1 border border-red-200 text-red-500 py-2 rounded-xl font-semibold text-sm hover:bg-red-50 transition-colors disabled:opacity-50"
+              className="flex-1 border border-[#e8c4be] text-[#b3493a] py-3 rounded-full font-bold text-sm hover:bg-[#fbe9e7] transition-colors disabled:opacity-50"
             >
               {deleting ? 'Deleting…' : 'Delete Post'}
             </button>

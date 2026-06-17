@@ -4,7 +4,7 @@ import { useAuthStore } from '../stores/authStore';
 
 export default function Profile() {
   const { user, setAuth } = useAuthStore();
-  const token = useAuthStore((s) => s.token)!;
+  const token = useAuthStore((s) => s.token);
 
   const [name, setName] = useState(user?.name ?? '');
   const [description, setDescription] = useState(user?.description ?? '');
@@ -23,7 +23,7 @@ export default function Profile() {
       const { data } = await api.patch(`/api/users/${user?.id}`, {
         name, description, photo, phoneNumber,
       });
-      setAuth(token, data);
+      if (token) setAuth(token, data);
       setSuccess(true);
     } catch (err: any) {
       setError(err?.response?.data?.message ?? 'Failed to update profile.');
@@ -32,76 +32,79 @@ export default function Profile() {
     }
   }
 
-  return (
-    <div className="max-w-xl mx-auto px-6 py-10">
-      <h1 className="text-2xl font-bold text-gray-900 mb-8">Edit Profile</h1>
+  const inputClass =
+    "w-full bg-white border border-[#e4eee7] rounded-xl px-3.5 py-2.5 text-sm text-[#1d3327] placeholder:text-[#9bb0a4] focus:outline-none focus:ring-2 focus:ring-[#4a9d72] focus:border-transparent transition";
 
-      <div className="flex items-center gap-4 mb-8">
+  return (
+    <div className="max-w-xl mx-auto px-6 py-10 font-['Plus_Jakarta_Sans',sans-serif]">
+      <h1 className="text-2xl font-extrabold text-[#1d3327] tracking-tight mb-8">Edit Profile</h1>
+
+      <div className="flex items-center gap-4 mb-8 bg-white border border-[#e4eee7] rounded-3xl p-5">
         {photo ? (
           <img src={photo} className="w-16 h-16 rounded-full object-cover" alt="" />
         ) : (
-          <div className="w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 text-2xl font-bold">
+          <div className="w-16 h-16 rounded-full bg-[#dcecdf] flex items-center justify-center text-[#3f8c5f] text-2xl font-extrabold">
             {user?.name?.[0]}
           </div>
         )}
         <div>
-          <div className="font-semibold text-gray-800">{user?.name}</div>
-          <div className="text-sm text-gray-400">
-            {user?.userType === 'CARE_GIVER' ? '🩺 Caregiver' : '🧓 Care Seeker'}
+          <div className="font-bold text-[#1d3327]">{user?.name}</div>
+          <div className="text-sm text-[#7fa890] mt-0.5">
+            {user?.userType === 'CARE_GIVER' ? 'Caregiver' : 'Care Seeker'}
           </div>
         </div>
       </div>
 
       {success && (
-        <div className="bg-emerald-50 text-emerald-700 text-sm rounded-lg px-4 py-3 mb-4">
+        <div className="bg-[#dcecdf] text-[#3f8c5f] text-sm font-medium rounded-xl px-4 py-3 mb-4">
           Profile updated.
         </div>
       )}
       {error && (
-        <div className="bg-red-50 text-red-600 text-sm rounded-lg px-4 py-3 mb-4">{error}</div>
+        <div className="bg-[#fbe9e7] text-[#b3493a] text-sm font-medium rounded-xl px-4 py-3 mb-4">{error}</div>
       )}
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-5">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Full name</label>
+          <label className="block text-sm font-semibold text-[#2f4339] mb-1.5">Full name</label>
           <input
             required
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            className={inputClass}
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Phone number</label>
+          <label className="block text-sm font-semibold text-[#2f4339] mb-1.5">Phone number</label>
           <input
             value={phoneNumber}
             onChange={(e) => setPhoneNumber(e.target.value)}
-            className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            className={inputClass}
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">About you</label>
+          <label className="block text-sm font-semibold text-[#2f4339] mb-1.5">About you</label>
           <textarea
             rows={3}
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            className={inputClass}
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Photo URL</label>
+          <label className="block text-sm font-semibold text-[#2f4339] mb-1.5">Photo URL</label>
           <input
             type="url"
             value={photo}
             onChange={(e) => setPhoto(e.target.value)}
             placeholder="https://…"
-            className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            className={inputClass}
           />
         </div>
         <button
           type="submit"
           disabled={loading}
-          className="bg-emerald-600 text-white py-2 rounded-xl font-semibold hover:bg-emerald-700 transition-colors disabled:opacity-50"
+          className="bg-[#4a9d72] text-white py-3 rounded-full font-bold hover:bg-[#41895f] transition-colors disabled:opacity-50 mt-1"
         >
           {loading ? 'Saving…' : 'Save changes'}
         </button>

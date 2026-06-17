@@ -15,8 +15,12 @@ export default function Chat() {
   const bottomRef = useRef<HTMLDivElement>(null);
 
   async function fetchMessages() {
-    const { data } = await api.get(`/api/conversations/${id}/messages`);
-    setMessages(data);
+    try {
+      const { data } = await api.get(`/api/conversations/${id}/messages`);
+      setMessages(data);
+    } catch {
+      // polling will retry
+    }
   }
 
   useEffect(() => {
@@ -50,22 +54,25 @@ export default function Chat() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto px-6 py-6 flex flex-col h-full">
-      <div className="flex items-center gap-3 mb-4">
+    <div className="max-w-2xl mx-auto px-6 py-6 flex flex-col h-full font-['Plus_Jakarta_Sans',sans-serif]">
+      <div className="flex items-center gap-3 mb-4 pb-4 border-b border-[#e4eee7]">
         <button
           onClick={() => navigate('/conversations')}
-          className="text-sm text-gray-400 hover:text-gray-600"
+          className="w-9 h-9 rounded-full flex items-center justify-center text-[#4f6258] hover:bg-[#eef5ef] transition-colors"
+          aria-label="Back"
         >
-          ←
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+            <path d="M15 18l-6-6 6-6" />
+          </svg>
         </button>
         {other?.photo ? (
-          <img src={other.photo} className="w-8 h-8 rounded-full object-cover" alt="" />
+          <img src={other.photo} className="w-9 h-9 rounded-full object-cover" alt="" />
         ) : (
-          <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 font-bold text-sm">
+          <div className="w-9 h-9 rounded-full bg-[#dcecdf] flex items-center justify-center text-[#3f8c5f] font-bold text-sm">
             {other?.name?.[0] ?? '?'}
           </div>
         )}
-        <span className="font-semibold text-gray-800">{other?.name ?? 'Chat'}</span>
+        <span className="font-bold text-[#1d3327]">{other?.name ?? 'Chat'}</span>
       </div>
 
       <div className="flex-1 min-h-0 overflow-y-auto flex flex-col gap-3 py-2">
@@ -74,14 +81,14 @@ export default function Chat() {
           return (
             <div key={m.id} className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}>
               <div
-                className={`max-w-xs px-4 py-2 rounded-2xl text-sm ${
+                className={`max-w-xs px-4 py-2.5 rounded-2xl text-sm ${
                   isMe
-                    ? 'bg-emerald-600 text-white rounded-br-sm'
-                    : 'bg-gray-100 text-gray-800 rounded-bl-sm'
+                    ? 'bg-[#4a9d72] text-white rounded-br-md'
+                    : 'bg-white border border-[#e4eee7] text-[#2f4339] rounded-bl-md'
                 }`}
               >
-                <p>{m.body}</p>
-                <p className={`text-xs mt-1 ${isMe ? 'text-emerald-200' : 'text-gray-400'}`}>
+                <p className="leading-relaxed">{m.body}</p>
+                <p className={`text-xs mt-1 ${isMe ? 'text-[#cde6d8]' : 'text-[#9bb0a4]'}`}>
                   {new Date(m.sentAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                 </p>
               </div>
@@ -96,12 +103,12 @@ export default function Chat() {
           value={body}
           onChange={(e) => setBody(e.target.value)}
           placeholder="Type a message…"
-          className="flex-1 border border-gray-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+          className="flex-1 bg-white border border-[#e4eee7] rounded-full px-4 py-2.5 text-sm text-[#1d3327] placeholder:text-[#9bb0a4] focus:outline-none focus:ring-2 focus:ring-[#4a9d72] focus:border-transparent transition"
         />
         <button
           type="submit"
           disabled={sending || !body.trim()}
-          className="bg-emerald-600 text-white px-4 py-2 rounded-xl font-semibold text-sm hover:bg-emerald-700 transition-colors disabled:opacity-50"
+          className="bg-[#4a9d72] text-white px-5 py-2.5 rounded-full font-bold text-sm hover:bg-[#41895f] transition-colors disabled:opacity-50"
         >
           Send
         </button>

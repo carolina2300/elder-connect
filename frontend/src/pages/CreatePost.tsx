@@ -19,13 +19,14 @@ const QUALIFICATION_LABELS: Record<Qualification, string> = {
   POST_SURGERY: 'Post-Surgery',
 };
 
+const inputClass =
+  "w-full bg-white border border-[#e4eee7] rounded-xl px-3.5 py-2.5 text-sm text-[#1d3327] placeholder:text-[#9bb0a4] focus:outline-none focus:ring-2 focus:ring-[#4a9d72] focus:border-transparent transition";
+
 export default function CreatePost() {
   const user = useAuthStore((s) => s.user);
   const navigate = useNavigate();
 
-  const defaultKind: PostKind = user?.userType === 'CARE_GIVER' ? 'CAREGIVER' : 'CARETAKER';
-
-  const [kind] = useState<PostKind>(defaultKind);
+  const kind: PostKind = user?.userType === 'CARE_GIVER' ? 'CAREGIVER' : 'CARETAKER';
   const [description, setDescription] = useState('');
   const [distrito, setDistrito] = useState('');
   const [concelho, setConcelho] = useState('');
@@ -85,90 +86,53 @@ export default function CreatePost() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto px-6 py-10">
+    <div className="max-w-2xl mx-auto px-6 py-10 font-['Plus_Jakarta_Sans',sans-serif]">
       <button
         onClick={() => navigate(-1)}
-        className="text-sm text-gray-400 hover:text-gray-600 mb-6 flex items-center gap-1"
+        className="text-sm font-semibold text-[#4f6258] hover:text-[#234034] mb-6 flex items-center gap-1.5 transition-colors"
       >
-        ← Back
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
+          <path d="M15 18l-6-6 6-6" />
+        </svg>
+        Back
       </button>
 
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">
+      <h1 className="text-2xl font-extrabold text-[#1d3327] tracking-tight mb-6">
         {kind === 'CAREGIVER' ? 'Offer Your Services' : 'Post a Care Need'}
       </h1>
 
       {error && (
-        <div className="bg-red-50 text-red-600 text-sm rounded-lg px-4 py-3 mb-4">{error}</div>
+        <div className="bg-[#fbe9e7] text-[#b3493a] text-sm font-medium rounded-xl px-4 py-3 mb-4">{error}</div>
       )}
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-6">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+          <label className="block text-sm font-semibold text-[#2f4339] mb-1.5">Description</label>
           <textarea
             required
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             rows={4}
-            className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            className={inputClass}
             placeholder="Describe the care needed or services you offer…"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Location</label>
+          <label className="block text-sm font-semibold text-[#2f4339] mb-2">Location</label>
           <div className="grid grid-cols-3 gap-2">
-            <input
-              required
-              placeholder="Distrito"
-              value={distrito}
-              onChange={(e) => setDistrito(e.target.value)}
-              className="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
-            />
-            <input
-              required
-              placeholder="Concelho"
-              value={concelho}
-              onChange={(e) => setConcelho(e.target.value)}
-              className="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
-            />
-            <input
-              required
-              placeholder="Freguesia"
-              value={freguesia}
-              onChange={(e) => setFreguesia(e.target.value)}
-              className="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
-            />
+            <input required placeholder="Distrito" value={distrito} onChange={(e) => setDistrito(e.target.value)} className={inputClass} />
+            <input required placeholder="Concelho" value={concelho} onChange={(e) => setConcelho(e.target.value)} className={inputClass} />
+            <input required placeholder="Freguesia" value={freguesia} onChange={(e) => setFreguesia(e.target.value)} className={inputClass} />
           </div>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Price range (€)</label>
+          <label className="block text-sm font-semibold text-[#2f4339] mb-2">Price range (€)</label>
           <div className="grid grid-cols-3 gap-2">
-            <input
-              required
-              type="number"
-              min="0"
-              step="0.01"
-              placeholder="Min"
-              value={minCents}
-              onChange={(e) => setMinCents(e.target.value)}
-              className="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
-            />
-            <input
-              required
-              type="number"
-              min="0"
-              step="0.01"
-              placeholder="Max"
-              value={maxCents}
-              onChange={(e) => setMaxCents(e.target.value)}
-              className="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
-            />
-            <select
-              value={priceUnit}
-              onChange={(e) => setPriceUnit(e.target.value as PriceUnit)}
-              className="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
-            >
+            <input required type="number" min="0" step="0.01" placeholder="Min" value={minCents} onChange={(e) => setMinCents(e.target.value)} className={inputClass} />
+            <input required type="number" min="0" step="0.01" placeholder="Max" value={maxCents} onChange={(e) => setMaxCents(e.target.value)} className={inputClass} />
+            <select value={priceUnit} onChange={(e) => setPriceUnit(e.target.value as PriceUnit)} className={inputClass}>
               <option value="PER_HOUR">Per hour</option>
               <option value="PER_DAY">Per day</option>
               <option value="PER_WEEK">Per week</option>
@@ -178,21 +142,10 @@ export default function CreatePost() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Duration</label>
+          <label className="block text-sm font-semibold text-[#2f4339] mb-2">Duration</label>
           <div className="grid grid-cols-2 gap-2">
-            <input
-              required
-              type="number"
-              min="1"
-              value={durationAmount}
-              onChange={(e) => setDurationAmount(e.target.value)}
-              className="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
-            />
-            <select
-              value={durationUnit}
-              onChange={(e) => setDurationUnit(e.target.value as DurationUnit)}
-              className="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
-            >
+            <input required type="number" min="1" value={durationAmount} onChange={(e) => setDurationAmount(e.target.value)} className={inputClass} />
+            <select value={durationUnit} onChange={(e) => setDurationUnit(e.target.value as DurationUnit)} className={inputClass}>
               <option value="WEEK">Week(s)</option>
               <option value="MONTH">Month(s)</option>
             </select>
@@ -201,39 +154,24 @@ export default function CreatePost() {
 
         {kind === 'CAREGIVER' ? (
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Available from</label>
-            <input
-              type="date"
-              value={earliestStartDate}
-              onChange={(e) => setEarliestStartDate(e.target.value)}
-              className="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
-            />
+            <label className="block text-sm font-semibold text-[#2f4339] mb-1.5">Available from</label>
+            <input type="date" value={earliestStartDate} onChange={(e) => setEarliestStartDate(e.target.value)} className={inputClass} />
           </div>
         ) : (
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Start date</label>
-              <input
-                type="date"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
-              />
+              <label className="block text-sm font-semibold text-[#2f4339] mb-1.5">Start date</label>
+              <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className={inputClass} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">End date</label>
-              <input
-                type="date"
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
-                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
-              />
+              <label className="block text-sm font-semibold text-[#2f4339] mb-1.5">End date</label>
+              <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className={inputClass} />
             </div>
           </div>
         )}
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-semibold text-[#2f4339] mb-2">
             {kind === 'CAREGIVER' ? 'Services you offer' : 'Services needed'}
           </label>
           <div className="flex flex-wrap gap-2">
@@ -242,10 +180,10 @@ export default function CreatePost() {
                 key={q}
                 type="button"
                 onClick={() => toggleQual(q)}
-                className={`text-sm px-3 py-1.5 rounded-full border transition-colors ${
+                className={`text-sm px-3.5 py-1.5 rounded-full border font-medium transition-colors ${
                   selectedQuals.includes(q)
-                    ? 'bg-emerald-600 text-white border-emerald-600'
-                    : 'border-gray-200 text-gray-600 hover:border-emerald-400'
+                    ? 'bg-[#4a9d72] text-white border-[#4a9d72]'
+                    : 'bg-white border-[#e4eee7] text-[#4f6258] hover:border-[#4a9d72]'
                 }`}
               >
                 {QUALIFICATION_LABELS[q]}
@@ -257,7 +195,7 @@ export default function CreatePost() {
         <button
           type="submit"
           disabled={loading}
-          className="bg-emerald-600 text-white py-3 rounded-xl font-semibold hover:bg-emerald-700 transition-colors disabled:opacity-50"
+          className="bg-[#4a9d72] text-white py-3 rounded-full font-bold hover:bg-[#41895f] transition-colors disabled:opacity-50"
         >
           {loading ? 'Posting…' : 'Publish Post'}
         </button>

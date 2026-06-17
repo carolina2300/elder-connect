@@ -36,4 +36,11 @@ public class GlobalExceptionHandler {
         problem.setTitle("Conversa não encontrada");
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(problem);
     }
+
+    @ExceptionHandler(ReviewAlreadyExistsException.class)
+    public ResponseEntity<ProblemDetail> handleReviewAlreadyExists(ReviewAlreadyExistsException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setTitle("Avaliação já existe");
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(problem);
+    }
 }

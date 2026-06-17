@@ -29,4 +29,11 @@ public class GlobalExceptionHandler {
         problem.setTitle("Post não encontrado");
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(problem);
     }
+
+    @ExceptionHandler(ConversationNotFoundException.class)
+    public ResponseEntity<ProblemDetail> handleConversationNotFound(ConversationNotFoundException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problem.setTitle("Conversa não encontrada");
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(problem);
+    }
 }

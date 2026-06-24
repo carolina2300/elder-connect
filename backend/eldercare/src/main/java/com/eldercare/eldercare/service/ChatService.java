@@ -1,7 +1,8 @@
 package com.eldercare.eldercare.service;
 
-import com.eldercare.eldercare.dto.ConversationDto;
+import com.eldercare.eldercare.dto.ConversationSummaryDto;
 import com.eldercare.eldercare.dto.MessageDto;
+import com.eldercare.eldercare.dto.UserDto;
 import com.eldercare.eldercare.exception.ConversationNotFoundException;
 import com.eldercare.eldercare.model.Conversation;
 import com.eldercare.eldercare.model.Message;
@@ -27,23 +28,23 @@ public class ChatService {
     private final UserRepository userRepository;
 
     @Transactional
-    public ConversationDto openConversation(UUID requesterId, UUID otherUserId) {
+    public ConversationSummaryDto openConversation(UUID requesterId, UUID otherUserId) {
         return conversationRepository.findBetween(requesterId, otherUserId)
-                .map(this::toDto)
+                .map(c -> toSummary(c, requesterId))
                 .orElseGet(() -> {
                     User a = userRepository.getReferenceById(requesterId);
                     User b = userRepository.getReferenceById(otherUserId);
                     Conversation c = new Conversation();
                     c.setParticipantA(a);
                     c.setParticipantB(b);
-                    return toDto(conversationRepository.save(c));
+                    return toSummary(conversationRepository.save(c), requesterId);
                 });
     }
 
     @Transactional(readOnly = true)
-    public List<ConversationDto> findMyConversations(UUID userId) {
+    public List<ConversationSummaryDto> findMyConversations(UUID userId) {
         return conversationRepository.findAllByParticipant(userId).stream()
-                .map(this::toDto)
+                .map(c -> toSummary(c, userId))
                 .toList();
     }
 
@@ -91,8 +92,21 @@ public class ChatService {
         }
     }
 
-    private ConversationDto toDto(Conversation c) {
-        return new ConversationDto(c.getId(), c.getParticipantA().getId(), c.getParticipantB().getId(), c.getCreatedAt());
+    private ConversationSummaryDto toSummary(Conversation c, UUID requesterId) {
+        User other = c.getParticipantA().getId().equals(requesterId)
+                ? c.getParticipantB()
+                : c.getParticipantA();
+        List<Message> msgs = messageRepository.findByConversationIdOrderBySentAtAsc(c.getId());
+        MessageDto lastMessage = msgs.isEmpty() ? null : toMessageDto(msgs.get(msgs.size() - 1));
+        int unreadCount = (int) msgs.stream()
+                .filter(m -> !m.getSender().getId().equals(requesterId) && m.getReadAt() == null)
+                .count();
+        return new ConversationSummaryDto(c.getId(), toUserDto(other), lastMessage, unreadCount, c.getCreatedAt());
+    }
+
+    private UserDto toUserDto(User u) {
+        return new UserDto(u.getId(), u.getEmail(), u.getName(), u.getDescription(),
+                u.getPhoto(), u.getPhoneNumber(), u.getUserType(), u.getCreatedAt());
     }
 
     private MessageDto toMessageDto(Message m) {

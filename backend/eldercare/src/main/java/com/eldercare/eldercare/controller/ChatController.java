@@ -1,6 +1,6 @@
 package com.eldercare.eldercare.controller;
 
-import com.eldercare.eldercare.dto.ConversationDto;
+import com.eldercare.eldercare.dto.ConversationSummaryDto;
 import com.eldercare.eldercare.dto.MessageDto;
 import com.eldercare.eldercare.dto.SendMessageRequest;
 import com.eldercare.eldercare.service.ChatService;
@@ -22,13 +22,13 @@ public class ChatController {
     private final ChatService chatService;
 
     @PostMapping
-    public ResponseEntity<ConversationDto> open(@RequestParam UUID with, Authentication auth) {
+    public ResponseEntity<ConversationSummaryDto> open(@RequestParam UUID with, Authentication auth) {
         UUID requesterId = (UUID) auth.getPrincipal();
         return ResponseEntity.status(HttpStatus.CREATED).body(chatService.openConversation(requesterId, with));
     }
 
     @GetMapping
-    public List<ConversationDto> myConversations(Authentication auth) {
+    public List<ConversationSummaryDto> myConversations(Authentication auth) {
         UUID requesterId = (UUID) auth.getPrincipal();
         return chatService.findMyConversations(requesterId);
     }

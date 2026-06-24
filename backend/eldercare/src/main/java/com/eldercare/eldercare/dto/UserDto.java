@@ -12,6 +12,6 @@ public record UserDto(
         String description,
         String photo,
         String phoneNumber,
-        UserType userType,
+        UserType role,
         Instant createdAt
 ) {}

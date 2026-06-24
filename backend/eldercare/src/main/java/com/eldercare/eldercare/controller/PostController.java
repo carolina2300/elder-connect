@@ -1,15 +1,19 @@
 package com.eldercare.eldercare.controller;
 
 import com.eldercare.eldercare.dto.CreatePostRequest;
+import com.eldercare.eldercare.dto.PageResponse;
 import com.eldercare.eldercare.dto.PostDto;
+import com.eldercare.eldercare.model.Qualification;
 import com.eldercare.eldercare.service.PostService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -27,8 +31,21 @@ public class PostController {
     }
 
     @GetMapping
-    public List<PostDto> findAll() {
-        return postService.findAll();
+    public PageResponse<PostDto> search(
+            @RequestParam(required = false) String distrito,
+            @RequestParam(required = false) String concelho,
+            @RequestParam(required = false) String freguesia,
+            @RequestParam(required = false) List<Qualification> qualifications,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate availableOn,
+            @RequestParam(required = false) Integer priceMinCents,
+            @RequestParam(required = false) Integer priceMaxCents,
+            @RequestParam(required = false) Integer durationMinMonths,
+            @RequestParam(required = false) Integer durationMaxMonths,
+            @RequestParam(defaultValue = "recent") String sort,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return postService.search(distrito, concelho, freguesia, qualifications, availableOn,
+                priceMinCents, priceMaxCents, durationMinMonths, durationMaxMonths, sort, page, size);
     }
 
     @GetMapping("/{id}")

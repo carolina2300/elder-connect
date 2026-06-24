@@ -43,7 +43,7 @@ function durationLabel(post: Post): string {
 
 function dateLabel(post: Post): string {
   if (post.kind === 'CAREGIVER') return t.post.availableFrom(formatDateShort(post.earliestStartDate))
-  return t.post.dateRange(formatDateShort(post.startDate), formatDateShort(post.endDate))
+  return t.post.dateRange(formatDateShort(post.startDate), post.endDate ? formatDateShort(post.endDate) : '—')
 }
 
 export function PostCardRow({ post, author }: Props) {

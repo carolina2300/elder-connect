@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router'
-import { useForm } from 'react-hook-form'
+import { useForm, type Resolver } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { toast } from 'sonner'
@@ -95,7 +95,8 @@ export function NewCaregiverPostPage() {
   const [availError, setAvailError] = useState<string>()
 
   const form = useForm<FormData>({
-    resolver: zodResolver(schema),
+    // zod v4 coerce gives input type `unknown`; resolver output is FormData.
+    resolver: zodResolver(schema) as Resolver<FormData>,
     mode: 'onTouched',
     defaultValues: {
       distrito: '',
@@ -142,7 +143,7 @@ export function NewCaregiverPostPage() {
         location: {
           distrito: data.distrito,
           concelho: data.concelho,
-          freguesia: data.freguesia || undefined,
+          freguesia: data.freguesia || '',
           postalCode: data.postalCode || undefined,
         },
         priceRange: {

@@ -42,7 +42,7 @@ export function PostMetaList({ post }: Props) {
       <Row icon={<CalendarDays className="size-5" aria-hidden />} label={t.search.date}>
         {post.kind === 'CAREGIVER'
           ? t.post.availableFrom(formatDate(post.earliestStartDate))
-          : t.post.dateRange(formatDate(post.startDate), formatDate(post.endDate))}
+          : t.post.dateRange(formatDate(post.startDate), post.endDate ? formatDate(post.endDate) : '—')}
       </Row>
       {post.kind === 'CARETAKER' ? (
         <Row icon={<Clock className="size-5" aria-hidden />} label={t.post.availabilityHeading}>

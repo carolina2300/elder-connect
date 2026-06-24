@@ -5,6 +5,11 @@ import type { Post, Qualification, User } from '@/shared/types/domain'
 
 export type PostsSortKey = 'recent' | 'price_asc' | 'price_desc'
 
+// Distributes over the Post union so each variant keeps its own fields
+// (plain Omit<Post, ...> collapses to keys common to both variants).
+type DistributiveOmit<T, K extends keyof never> = T extends unknown ? Omit<T, K> : never
+export type CreatePostInput = DistributiveOmit<Post, 'id' | 'authorId' | 'createdAt' | 'status'>
+
 export interface ListPostsParams {
   distrito?: string
   concelho?: string
@@ -66,7 +71,7 @@ export function useAuthor(id: string | undefined) {
 export function useCreatePost() {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (body: Omit<Post, 'id' | 'authorId' | 'createdAt' | 'status'>) =>
+    mutationFn: (body: CreatePostInput) =>
       apiFetch<Post>('/posts', { method: 'POST', body }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['posts'] })

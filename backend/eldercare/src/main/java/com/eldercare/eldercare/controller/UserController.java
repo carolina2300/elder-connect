@@ -4,6 +4,7 @@ import com.eldercare.eldercare.dto.UpdateUserRequest;
 import com.eldercare.eldercare.dto.UserDto;
 import com.eldercare.eldercare.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
@@ -20,6 +22,7 @@ public class UserController {
 
     @GetMapping
     public List<UserDto> findAll() {
+        log.info("operation=findAll");
         return userService.findAll();
     }
 

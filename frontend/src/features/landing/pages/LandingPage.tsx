@@ -23,11 +23,11 @@ export function LandingPage() {
   return (
     <>
       <section className="border-b border-border/60">
-        <div className="mx-auto max-w-6xl px-4 py-20 text-center sm:py-28">
-          <h1 className="mx-auto max-w-3xl text-5xl font-bold tracking-tight sm:text-6xl">
+        <div className="mx-auto max-w-6xl px-4 py-14 text-center sm:py-28">
+          <h1 className="mx-auto max-w-3xl text-3xl font-bold tracking-tight sm:text-6xl">
             {t.landing.heroTitle}
           </h1>
-          <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground">
+          <p className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
             {t.landing.heroSubtitle}
           </p>
           <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
@@ -62,16 +62,16 @@ export function LandingPage() {
         <div className="mx-auto grid max-w-6xl grid-cols-2 gap-8 px-4 py-12 sm:grid-cols-4">
           {stats.map((s) => (
             <div key={s.label} className="text-center">
-              <div className="text-4xl font-bold text-primary sm:text-5xl">{s.value}</div>
+              <div className="text-3xl font-bold text-primary sm:text-5xl">{s.value}</div>
               <div className="mt-1 text-sm text-muted-foreground">{s.label}</div>
             </div>
           ))}
         </div>
       </section>
 
-      <section className="mx-auto max-w-6xl px-4 py-20">
+      <section className="mx-auto max-w-6xl px-4 py-14 sm:py-20">
         <div className="mb-12 text-center">
-          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">{t.landing.whyTitle}</h2>
+          <h2 className="text-2xl font-bold tracking-tight sm:text-4xl">{t.landing.whyTitle}</h2>
           <p className="mx-auto mt-3 max-w-xl text-muted-foreground">{t.landing.whySubtitle}</p>
         </div>
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
@@ -107,8 +107,8 @@ export function LandingPage() {
       </section>
 
       <section className="border-t border-border/60 bg-card/40">
-        <div className="mx-auto max-w-4xl px-4 py-16 text-center">
-          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">{t.landing.ctaTitle}</h2>
+        <div className="mx-auto max-w-4xl px-4 py-14 text-center sm:py-16">
+          <h2 className="text-2xl font-bold tracking-tight sm:text-4xl">{t.landing.ctaTitle}</h2>
           <p className="mx-auto mt-3 max-w-xl text-muted-foreground">{t.landing.ctaSubtitle}</p>
           {!isAuth && (
             <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">

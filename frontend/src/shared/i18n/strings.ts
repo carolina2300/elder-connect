@@ -31,6 +31,7 @@ export const t = {
     becomeCaregiver: 'Tornar-me Cuidador',
     messages: 'Mensagens',
     myProfile: 'O meu perfil',
+    menu: 'Menu',
   },
   landing: {
     heroTitle: 'Cuidados Atenciosos para Quem Mais Lhe Importa',

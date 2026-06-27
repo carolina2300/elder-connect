@@ -23,7 +23,7 @@ import { t } from '@/shared/i18n/strings'
 import { cn } from '@/shared/lib/cn'
 import { useCreatePost } from '../api/posts'
 import { ApiError } from '@/shared/lib/api-client'
-import type { DayOfWeek, Qualification, TimeSlot, WeeklyAvailability } from '@/shared/types/domain'
+import type { DayOfWeek, Qualification, TimeSlot } from '@/shared/types/domain'
 
 const DAYS: DayOfWeek[] = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN']
 type SlotKey = 'morning' | 'afternoon' | 'evening'
@@ -53,13 +53,14 @@ function emptyGrid(): AvailGrid {
   ) as AvailGrid
 }
 
-function gridToWeeklyAvailability(grid: AvailGrid): WeeklyAvailability {
-  const result: WeeklyAvailability = {}
-  for (const day of DAYS) {
-    const slots = SLOT_KEYS.filter((s) => grid[day][s]).map((s) => SLOT_TIMES[s])
-    if (slots.length > 0) result[day] = slots
-  }
-  return result
+function gridToSlots(grid: AvailGrid): { day: DayOfWeek; startTime: string; endTime: string }[] {
+  return DAYS.flatMap((day) =>
+    SLOT_KEYS.filter((s) => grid[day][s]).map((s) => ({
+      day,
+      startTime: SLOT_TIMES[s].startTime,
+      endTime: SLOT_TIMES[s].endTime,
+    }))
+  )
 }
 
 function hasAnySlot(grid: AvailGrid): boolean {
@@ -154,7 +155,7 @@ export function NewCaregiverPostPage() {
         },
         duration: { amount: data.durationAmount, unit: data.durationUnit },
         earliestStartDate: data.earliestStartDate,
-        weeklyAvailability: gridToWeeklyAvailability(availGrid),
+        availabilitySlots: gridToSlots(availGrid),
         offeredQualifications: qualifications,
         description: data.description || undefined,
       },

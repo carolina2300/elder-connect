@@ -1,6 +1,15 @@
+import { useState } from 'react'
 import { Link, NavLink, useNavigate } from 'react-router'
-import { Heart, LogOut, User as UserIcon } from 'lucide-react'
+import { Heart, LogOut, Menu, User as UserIcon } from 'lucide-react'
 import { Button } from '@/shared/components/ui/button'
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from '@/shared/components/ui/sheet'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -36,6 +45,7 @@ export function TopNav() {
   const isAuth = useSessionStore((s) => Boolean(s.token))
   const logout = useLogout()
   const navigate = useNavigate()
+  const [mobileOpen, setMobileOpen] = useState(false)
 
   const onLogout = () => {
     logout.mutate(undefined, {
@@ -88,6 +98,40 @@ export function TopNav() {
         </nav>
 
         <div className="flex items-center gap-2">
+          {items.length > 0 && (
+            <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" className="md:hidden" aria-label={t.nav.menu}>
+                  <Menu />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-72">
+                <SheetHeader>
+                  <SheetTitle>{t.nav.menu}</SheetTitle>
+                </SheetHeader>
+                <nav className="mt-4 flex flex-col gap-1 px-4">
+                  {items.map((item) => (
+                    <SheetClose asChild key={item.label}>
+                      <NavLink
+                        to={item.to}
+                        className={({ isActive }) =>
+                          cn(
+                            'rounded-md px-3 py-2 text-base font-medium transition-colors',
+                            isActive
+                              ? 'bg-accent text-primary'
+                              : 'text-foreground/80 hover:bg-accent hover:text-primary'
+                          )
+                        }
+                      >
+                        {item.label}
+                      </NavLink>
+                    </SheetClose>
+                  ))}
+                </nav>
+              </SheetContent>
+            </Sheet>
+          )}
+
           {isAuth && user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>

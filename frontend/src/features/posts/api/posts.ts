@@ -1,14 +1,57 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { apiFetch } from '@/shared/lib/api-client'
 import type { PageResponse } from '@/shared/types/api'
-import type { Post, Qualification, User } from '@/shared/types/domain'
+import type {
+  DayOfWeek,
+  Duration,
+  GeoLocation,
+  Post,
+  PriceRange,
+  Qualification,
+  User,
+} from '@/shared/types/domain'
 
 export type PostsSortKey = 'recent' | 'price_asc' | 'price_desc'
 
-// Distributes over the Post union so each variant keeps its own fields
-// (plain Omit<Post, ...> collapses to keys common to both variants).
-type DistributiveOmit<T, K extends keyof never> = T extends unknown ? Omit<T, K> : never
-export type CreatePostInput = DistributiveOmit<Post, 'id' | 'authorId' | 'createdAt' | 'status'>
+// Backend (PostDto) sends CARETAKER daily window as two flat fields
+// (dailyStartTime/dailyEndTime) instead of the nested dailyTimeWindow the
+// domain type expects. Normalize on the way in so components get the contract.
+type RawPost = Post & {
+  dailyStartTime?: string | null
+  dailyEndTime?: string | null
+}
+
+function normalizePost(raw: RawPost): Post {
+  if (raw.kind === 'CARETAKER' && !raw.dailyTimeWindow && raw.dailyStartTime && raw.dailyEndTime) {
+    const { dailyStartTime, dailyEndTime, ...rest } = raw
+    return { ...rest, dailyTimeWindow: { startTime: dailyStartTime, endTime: dailyEndTime } }
+  }
+  return raw
+}
+
+// Mirrors backend CreatePostRequest: flat daily times (CARETAKER) and a flat
+// availabilitySlots array (CAREGIVER) instead of the nested domain shapes.
+interface CreatePostBase {
+  description?: string
+  location: GeoLocation
+  priceRange: PriceRange
+  duration: Duration
+}
+export interface CreateCaregiverPostInput extends CreatePostBase {
+  kind: 'CAREGIVER'
+  earliestStartDate: string
+  offeredQualifications: Qualification[]
+  availabilitySlots: { day: DayOfWeek; startTime: string; endTime: string }[]
+}
+export interface CreateCaretakerPostInput extends CreatePostBase {
+  kind: 'CARETAKER'
+  startDate: string
+  endDate?: string
+  dailyStartTime: string
+  dailyEndTime: string
+  requiredQualifications: Qualification[]
+}
+export type CreatePostInput = CreateCaregiverPostInput | CreateCaretakerPostInput
 
 export interface ListPostsParams {
   distrito?: string
@@ -48,14 +91,17 @@ function buildQuery(params: ListPostsParams): string {
 export function useListPosts(params: ListPostsParams) {
   return useQuery({
     queryKey: ['posts', params],
-    queryFn: () => apiFetch<PageResponse<Post>>(`/posts${buildQuery(params)}`),
+    queryFn: async () => {
+      const res = await apiFetch<PageResponse<RawPost>>(`/posts${buildQuery(params)}`)
+      return { ...res, content: res.content.map(normalizePost) }
+    },
   })
 }
 
 export function usePost(id: string | undefined) {
   return useQuery({
     queryKey: ['post', id],
-    queryFn: () => apiFetch<Post>(`/posts/${id}`),
+    queryFn: async () => normalizePost(await apiFetch<RawPost>(`/posts/${id}`)),
     enabled: Boolean(id),
   })
 }
@@ -71,8 +117,8 @@ export function useAuthor(id: string | undefined) {
 export function useCreatePost() {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (body: CreatePostInput) =>
-      apiFetch<Post>('/posts', { method: 'POST', body }),
+    mutationFn: async (body: CreatePostInput) =>
+      normalizePost(await apiFetch<RawPost>('/posts', { method: 'POST', body })),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['posts'] })
     },

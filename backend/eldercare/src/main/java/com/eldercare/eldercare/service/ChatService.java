@@ -11,6 +11,7 @@ import com.eldercare.eldercare.repository.ConversationRepository;
 import com.eldercare.eldercare.repository.MessageRepository;
 import com.eldercare.eldercare.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +20,7 @@ import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ChatService {
@@ -26,6 +28,7 @@ public class ChatService {
     private final ConversationRepository conversationRepository;
     private final MessageRepository messageRepository;
     private final UserRepository userRepository;
+    private final EmailService emailService;
 
     @Transactional
     public ConversationSummaryDto openConversation(UUID requesterId, UUID otherUserId) {
@@ -67,6 +70,18 @@ public class ChatService {
         message.setConversation(conversation);
         message.setSender(userRepository.getReferenceById(senderId));
         message.setBody(body);
+
+        // check if first message. Query MessageRepository
+        if(messageRepository.countByConversation_Id(conversationId) == 0){
+            log.info("Sending Email");
+            if(conversation.getParticipantA().getId().equals(senderId)){
+                emailService.sendNewMessageNotification(conversation.getParticipantB().getEmail(), conversation.getParticipantA().getName());
+            }
+            else {
+                emailService.sendNewMessageNotification(conversation.getParticipantA().getEmail(), conversation.getParticipantB().getName());
+            }
+
+        }
         return toMessageDto(messageRepository.save(message));
     }
 

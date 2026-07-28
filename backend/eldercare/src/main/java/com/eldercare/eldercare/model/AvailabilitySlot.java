@@ -1,14 +1,20 @@
 package com.eldercare.eldercare.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalTime;
 import java.util.UUID;
 
+@Builder
 @Data
 @Entity
 @Table(name = "caregiver_availability")
+@NoArgsConstructor
+@AllArgsConstructor
 public class AvailabilitySlot {
 
     @Id

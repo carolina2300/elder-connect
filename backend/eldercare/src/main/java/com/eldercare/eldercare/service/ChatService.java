@@ -5,6 +5,7 @@ import com.eldercare.eldercare.dto.MessageDto;
 import com.eldercare.eldercare.dto.UserDto;
 import com.eldercare.eldercare.exception.ConversationNotFoundException;
 import com.eldercare.eldercare.model.Conversation;
+import com.eldercare.eldercare.model.EmailNotificationEvent;
 import com.eldercare.eldercare.model.Message;
 import com.eldercare.eldercare.model.User;
 import com.eldercare.eldercare.repository.ConversationRepository;
@@ -28,7 +29,7 @@ public class ChatService {
     private final ConversationRepository conversationRepository;
     private final MessageRepository messageRepository;
     private final UserRepository userRepository;
-    private final EmailService emailService;
+    private final KafkaEmailProducer kafkaEmailProducer;
 
     @Transactional
     public ConversationSummaryDto openConversation(UUID requesterId, UUID otherUserId) {
@@ -72,16 +73,24 @@ public class ChatService {
         message.setBody(body);
 
         // check if first message. Query MessageRepository
-        if(messageRepository.countByConversation_Id(conversationId) == 0){
-            log.info("Sending Email");
-            if(conversation.getParticipantA().getId().equals(senderId)){
-                emailService.sendNewMessageNotification(conversation.getParticipantB().getEmail(), conversation.getParticipantA().getName());
-            }
-            else {
-                emailService.sendNewMessageNotification(conversation.getParticipantA().getEmail(), conversation.getParticipantB().getName());
-            }
+        if (messageRepository.countByConversation_Id(conversationId) == 0) {
 
+            User recipient = conversation.getParticipantA().getId().equals(senderId)
+                    ? conversation.getParticipantB()
+                    : conversation.getParticipantA();
+
+            User sender = conversation.getParticipantA().getId().equals(senderId)
+                    ? conversation.getParticipantA()
+                    : conversation.getParticipantB();
+
+            kafkaEmailProducer.sendEmailNotification(
+                    new EmailNotificationEvent(
+                            recipient.getEmail(),
+                            sender.getName()
+                    )
+            );
         }
+
         return toMessageDto(messageRepository.save(message));
     }
 

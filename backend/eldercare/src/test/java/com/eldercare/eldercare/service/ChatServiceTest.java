@@ -4,6 +4,7 @@ import com.eldercare.eldercare.dto.ConversationSummaryDto;
 import com.eldercare.eldercare.dto.MessageDto;
 import com.eldercare.eldercare.exception.ConversationNotFoundException;
 import com.eldercare.eldercare.model.Conversation;
+import com.eldercare.eldercare.model.EmailNotificationEvent;
 import com.eldercare.eldercare.model.Message;
 import com.eldercare.eldercare.model.User;
 import com.eldercare.eldercare.repository.ConversationRepository;
@@ -28,9 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ChatServiceTest {
@@ -44,11 +43,18 @@ class ChatServiceTest {
     @Mock
     UserRepository userRepository;
 
+    @Mock
+    KafkaEmailProducer kafkaEmailProducer;
+
     @InjectMocks
     ChatService victim;
 
     private User userWithId(UUID id) {
         return User.builder().id(id).build();
+    }
+
+    private User userWithIdNameEmail(UUID id, String name, String email) {
+        return User.builder().id(id).name(name).email(email).build();
     }
 
     private Conversation conversation(UUID id, User a, User b) {
@@ -163,10 +169,10 @@ class ChatServiceTest {
     }
 
     @Test
-    public void sendMessage_savesAndReturnsDto() {
+    public void sendFirstMessage_savesAndReturnsDto() {
         UUID convId = UUID.randomUUID();
         UUID senderId = UUID.randomUUID();
-        Conversation c = conversation(convId, userWithId(senderId), userWithId(UUID.randomUUID()));
+        Conversation c = conversation(convId, userWithIdNameEmail(senderId, "Sender", "sender@email"), userWithIdNameEmail(UUID.randomUUID(), "Receiver", "receiver@email"));
         when(conversationRepository.findById(convId)).thenReturn(Optional.of(c));
         when(userRepository.getReferenceById(senderId)).thenReturn(userWithId(senderId));
         when(messageRepository.save(any(Message.class))).thenAnswer(invocation -> {
@@ -174,11 +180,40 @@ class ChatServiceTest {
             m.setId(UUID.randomUUID());
             return m;
         });
+        when(messageRepository.countByConversation_Id(convId)).thenReturn(0L);
+
+        MessageDto result = victim.sendMessage(convId, senderId, "new message");
+
+        ArgumentCaptor<Message> captor = ArgumentCaptor.forClass(Message.class);
+        verify(conversationRepository).findById(convId);
+        verify(userRepository).getReferenceById(senderId);
+        verify(messageRepository).save(captor.capture());
+        verify(kafkaEmailProducer).sendEmailNotification(new EmailNotificationEvent("receiver@email","Sender"));
+        assertEquals("new message", captor.getValue().getBody());
+        assertEquals(senderId, result.senderId());
+        assertEquals("new message", result.body());
+        verifyNoMoreInteractions(messageRepository, kafkaEmailProducer, conversationRepository, userRepository);
+    }
+
+    @Test
+    public void sendSecondMessage_savesAndReturnsDto() {
+        UUID convId = UUID.randomUUID();
+        UUID senderId = UUID.randomUUID();
+        Conversation c = conversation(convId, userWithIdNameEmail(senderId, "Sender", "sender@email"), userWithIdNameEmail(UUID.randomUUID(), "Receiver", "receiver@email"));
+        when(conversationRepository.findById(convId)).thenReturn(Optional.of(c));
+        when(userRepository.getReferenceById(senderId)).thenReturn(userWithId(senderId));
+        when(messageRepository.save(any(Message.class))).thenAnswer(invocation -> {
+            Message m = invocation.getArgument(0);
+            m.setId(UUID.randomUUID());
+            return m;
+        });
+        when(messageRepository.countByConversation_Id(convId)).thenReturn(1L);
 
         MessageDto result = victim.sendMessage(convId, senderId, "new message");
 
         ArgumentCaptor<Message> captor = ArgumentCaptor.forClass(Message.class);
         verify(messageRepository).save(captor.capture());
+        verifyNoInteractions(kafkaEmailProducer);
         assertEquals("new message", captor.getValue().getBody());
         assertEquals(senderId, result.senderId());
         assertEquals("new message", result.body());

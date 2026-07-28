@@ -56,7 +56,7 @@ function readFilters(sp: URLSearchParams): SearchFilters {
     durationMinMonths: readInt(sp, 'durationMinMonths'),
     durationMaxMonths: readInt(sp, 'durationMaxMonths'),
     sort: readSort(sp),
-    page: Math.max(1, readInt(sp, 'page') ?? 1),
+    page: Math.max(0, readInt(sp, 'page') ?? 0),
   }
 }
 

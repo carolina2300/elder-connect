@@ -17,7 +17,7 @@ export function usePostsSearch(filters: SearchFilters) {
       durationMinMonths: filters.durationMinMonths,
       durationMaxMonths: filters.durationMaxMonths,
       sort: filters.sort,
-      page: 1,
+      page: 0,
       size: PAGE_SIZE * filters.page,
     }),
     [filters]

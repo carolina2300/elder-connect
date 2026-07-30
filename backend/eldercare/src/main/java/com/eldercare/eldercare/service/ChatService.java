@@ -90,7 +90,7 @@ public class ChatService {
                     )
             );
         }
-
+        log.info("ChatService: sendMessage");
         return toMessageDto(messageRepository.save(message));
     }
 

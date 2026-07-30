@@ -6,6 +6,7 @@ import com.eldercare.eldercare.dto.SendMessageRequest;
 import com.eldercare.eldercare.service.ChatService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/conversations")
 @RequiredArgsConstructor
@@ -24,6 +26,9 @@ public class ChatController {
     @PostMapping
     public ResponseEntity<ConversationSummaryDto> open(@RequestParam UUID with, Authentication auth) {
         UUID requesterId = (UUID) auth.getPrincipal();
+
+        log.info("Received Request to Open Conversation. Users {} and {}", requesterId, with);
+
         return ResponseEntity.status(HttpStatus.CREATED).body(chatService.openConversation(requesterId, with));
     }
 

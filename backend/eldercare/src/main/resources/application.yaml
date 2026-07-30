@@ -21,14 +21,14 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
 
   mail:
-    host: sandbox.smtp.mailtrap.io
-    port: 2525
-    username: 90f95772b89ee8
-    password: c1569780ac3279
+    host: smtp.gmail.com
+    port: 587
+    username: cuidado.senior.pt@gmail.com
+    password:
     properties:
       mail:
         smtp:
-          auth: false
+          auth: true
           starttls:
             enable: true
 

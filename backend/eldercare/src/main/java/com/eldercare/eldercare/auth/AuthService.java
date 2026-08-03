@@ -6,11 +6,13 @@ import com.eldercare.eldercare.exception.InvalidCredentialsException;
 import com.eldercare.eldercare.model.User;
 import com.eldercare.eldercare.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -34,6 +36,7 @@ public class AuthService {
         user.setCreatedAt(Instant.now());
 
         User saved = userRepository.save(user);
+        log.info("Register {} User", user.getUserType());
         String token = jwtService.issue(saved.getId());
         return new AuthResponse(toDto(saved), token);
     }
@@ -47,6 +50,7 @@ public class AuthService {
         }
 
         String token = jwtService.issue(user.getId());
+        log.info("Login User {}", user.getId());
         return new AuthResponse(toDto(user), token);
     }
 

@@ -8,6 +8,7 @@ import com.eldercare.eldercare.model.*;
 import com.eldercare.eldercare.repository.PostRepository;
 import com.eldercare.eldercare.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +19,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PostService {
@@ -61,6 +63,7 @@ public class PostService {
             post.setRequiredQualifications(req.requiredQualifications() != null ? req.requiredQualifications() : List.of());
         }
 
+        log.info("Create {} Post by User {}", post.getKind(), authorId);
         return postMapper.toDto(postRepository.save(post));
     }
 
@@ -109,6 +112,7 @@ public class PostService {
                 .map(postMapper::toDto)
                 .toList();
 
+        log.info("Search for post");
         return new PageResponse<>(content, safePage, safeSize, total, totalPages);
     }
 

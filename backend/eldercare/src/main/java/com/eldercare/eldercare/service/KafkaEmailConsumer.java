@@ -20,7 +20,9 @@ public class KafkaEmailConsumer {
     )
     public void consume(EmailNotificationEvent event) {
 
-        log.info("Received event: {}", event);
+        log.info("Received EmailNotificationEvent for {}",
+                event.recipientEmail());
+
 
         emailService.sendNewMessageNotification(
                 event.recipientEmail(),

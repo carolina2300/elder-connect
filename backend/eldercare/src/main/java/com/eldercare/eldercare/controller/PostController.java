@@ -7,6 +7,7 @@ import com.eldercare.eldercare.model.Qualification;
 import com.eldercare.eldercare.service.PostService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/posts")
 @RequiredArgsConstructor
@@ -44,6 +46,8 @@ public class PostController {
             @RequestParam(defaultValue = "recent") String sort,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
+
+        log.info("Received request to search for Posts");
         return postService.search(distrito, concelho, freguesia, qualifications, availableOn,
                 priceMinCents, priceMaxCents, durationMinMonths, durationMaxMonths, sort, page, size);
     }
@@ -59,6 +63,7 @@ public class PostController {
     public ResponseEntity<Void> delete(@PathVariable UUID id, Authentication auth) {
         UUID requesterId = (UUID) auth.getPrincipal();
         postService.delete(id, requesterId);
+        log.info("Received request to delete Post {} of User {}", id, requesterId);
         return ResponseEntity.noContent().build();
     }
 }

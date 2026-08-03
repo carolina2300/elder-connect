@@ -36,6 +36,7 @@ public class ChatService {
         return conversationRepository.findBetween(requesterId, otherUserId)
                 .map(c -> toSummary(c, requesterId))
                 .orElseGet(() -> {
+                    log.info("Creating new conversation.");
                     User a = userRepository.getReferenceById(requesterId);
                     User b = userRepository.getReferenceById(otherUserId);
                     Conversation c = new Conversation();
@@ -47,6 +48,7 @@ public class ChatService {
 
     @Transactional(readOnly = true)
     public List<ConversationSummaryDto> findMyConversations(UUID userId) {
+        log.info("Find Conversations of User {}", userId);
         return conversationRepository.findAllByParticipant(userId).stream()
                 .map(c -> toSummary(c, userId))
                 .toList();
@@ -57,6 +59,7 @@ public class ChatService {
         Conversation conversation = conversationRepository.findById(conversationId)
                 .orElseThrow(() -> new ConversationNotFoundException(conversationId));
         assertParticipant(conversation, requesterId);
+        log.info("Find messages with conversationId {} if User {} is valid", conversationId, requesterId);
         return messageRepository.findByConversationIdOrderBySentAtAsc(conversationId).stream()
                 .map(this::toMessageDto)
                 .toList();
@@ -75,6 +78,9 @@ public class ChatService {
         // check if first message. Query MessageRepository
         if (messageRepository.countByConversation_Id(conversationId) == 0) {
 
+            log.info("First message in conversation {}. Publishing email notification in Kafka.",
+                    conversationId);
+
             User recipient = conversation.getParticipantA().getId().equals(senderId)
                     ? conversation.getParticipantB()
                     : conversation.getParticipantA();
@@ -90,8 +96,9 @@ public class ChatService {
                     )
             );
         }
-        log.info("ChatService: sendMessage");
-        return toMessageDto(messageRepository.save(message));
+        MessageDto messageDto = toMessageDto(messageRepository.save(message));
+        log.info("Message {} sent in conversation {}", message.getId(), conversationId);
+        return messageDto;
     }
 
     @Transactional
@@ -104,6 +111,7 @@ public class ChatService {
         if (message.getReadAt() == null && !message.getSender().getId().equals(requesterId)) {
             message.setReadAt(Instant.now());
             message = messageRepository.save(message);
+            log.info("Mark Message as Read {}", messageId);
         }
         return toMessageDto(message);
     }
@@ -125,6 +133,7 @@ public class ChatService {
         int unreadCount = (int) msgs.stream()
                 .filter(m -> !m.getSender().getId().equals(requesterId) && m.getReadAt() == null)
                 .count();
+        log.info("Create summary of Conversation {} of User {} with User {}", c.getId(), requesterId, other.getId());
         return new ConversationSummaryDto(c.getId(), toUserDto(other), lastMessage, unreadCount, c.getCreatedAt());
     }
 

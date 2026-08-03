@@ -16,7 +16,9 @@ public class KafkaEmailProducer {
     }
 
     public void sendEmailNotification(EmailNotificationEvent event) {
-        log.info("Sending email to {}", event.recipientEmail());
+        log.info("Publishing EmailNotificationEvent for recipient {}",
+                event.recipientEmail());
+
         kafkaTemplate.send(
                 "email-notifications",
                 event.recipientEmail(),

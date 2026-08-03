@@ -16,6 +16,7 @@ public class EmailService {
     }
 
     public void sendNewMessageNotification(String toEmail, String senderName) {
+        log.info("Sending Email to {}", toEmail);
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom("cuidado.senior.pt@gmail.com");
         message.setTo(toEmail);

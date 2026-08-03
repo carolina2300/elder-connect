@@ -26,21 +26,21 @@ public class ChatController {
     @PostMapping
     public ResponseEntity<ConversationSummaryDto> open(@RequestParam UUID with, Authentication auth) {
         UUID requesterId = (UUID) auth.getPrincipal();
-
         log.info("Received Request to Open Conversation. Users {} and {}", requesterId, with);
-
         return ResponseEntity.status(HttpStatus.CREATED).body(chatService.openConversation(requesterId, with));
     }
 
     @GetMapping
     public List<ConversationSummaryDto> myConversations(Authentication auth) {
         UUID requesterId = (UUID) auth.getPrincipal();
+        log.info("Received request to find Conversations of User {}", requesterId);
         return chatService.findMyConversations(requesterId);
     }
 
     @GetMapping("/{id}/messages")
     public List<MessageDto> messages(@PathVariable UUID id, Authentication auth) {
         UUID requesterId = (UUID) auth.getPrincipal();
+        log.info("Received request to find Messages of User {}", requesterId);
         return chatService.findMessages(id, requesterId);
     }
 
@@ -49,6 +49,7 @@ public class ChatController {
                                            @Valid @RequestBody SendMessageRequest req,
                                            Authentication auth) {
         UUID requesterId = (UUID) auth.getPrincipal();
+        log.info("Received request to send Message. Conversation {} and Sender {}", id, requesterId);
         return ResponseEntity.status(HttpStatus.CREATED).body(chatService.sendMessage(id, requesterId, req.body()));
     }
 
@@ -57,6 +58,7 @@ public class ChatController {
                                  @PathVariable UUID msgId,
                                  Authentication auth) {
         UUID requesterId = (UUID) auth.getPrincipal();
+        log.info("Received request to mark Message {} as read, of User {}", msgId, requesterId);
         return chatService.markAsRead(id, msgId, requesterId);
     }
 }

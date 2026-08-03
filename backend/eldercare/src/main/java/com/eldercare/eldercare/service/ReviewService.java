@@ -7,12 +7,14 @@ import com.eldercare.eldercare.model.Review;
 import com.eldercare.eldercare.repository.ReviewRepository;
 import com.eldercare.eldercare.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ReviewService {
@@ -33,6 +35,8 @@ public class ReviewService {
         review.setReviewed(userRepository.getReferenceById(reviewedId));
         review.setRating(req.rating());
         review.setText(req.text());
+
+        log.info("Create Review by User {} to User {}",reviewerId, reviewedId);
         return toDto(reviewRepository.save(review));
     }
 

@@ -5,6 +5,7 @@ import com.eldercare.eldercare.dto.UserDto;
 import com.eldercare.eldercare.model.User;
 import com.eldercare.eldercare.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -13,6 +14,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -33,6 +35,8 @@ public class UserService {
         if (!id.equals(requesterId)) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
+        log.info("Update user {}", id);
+
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         if (req.name() != null && !req.name().isBlank()) user.setName(req.name());

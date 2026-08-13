@@ -53,4 +53,11 @@ app:
     secret: dGhpcy1pcy1hLXNlY3VyZS1zZWNyZXQta2V5LWZvci1lbGRlcmNhcmUtY29ubmVjdA==
     expiration-ms: 86400000
 
+aws:
+  s3:
+    bucket: eldercare-photos-905418127186-eu-west-1-an
+    region: eu-west-1
+  accessKeyId:
+  secretAccessKey:
+
 

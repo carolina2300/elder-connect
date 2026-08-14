@@ -117,7 +117,7 @@ class UserServiceTest {
         when(userRepository.save(user)).thenReturn(userUpdated);
 
 
-        UpdateUserRequest req = new UpdateUserRequest("marie", null, null, "000");
+        UpdateUserRequest req = new UpdateUserRequest("marie", null, "000");
 
         UserDto result = victim.update(id, id, req);
 

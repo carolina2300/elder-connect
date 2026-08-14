@@ -1,60 +1,76 @@
 package com.eldercare.eldercare.service;
 
-import com.eldercare.eldercare.config.S3Config;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.presigner.S3Presigner;
+import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
+import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;
 
-import java.io.IOException;
-import java.util.UUID;
+import java.time.Duration;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class StorageService {
     private final S3Client s3Client;
-    private final S3Config s3Config;
+    private final S3Presigner s3Presigner;
 
     @Value("${aws.s3.bucket}")
     private String bucket;
 
-    public String uploadPhoto(UUID userId, MultipartFile file) throws IOException {
-        // generate unique key for the file
-        String key = "users/" + userId + "/photo/" + UUID.randomUUID() + getExtension(file);
+    public String generateUploadPhotoUrl(String filename, String contentType) {
+        log.info("Generating Presign URL for upload photo");
+        PutObjectRequest request = PutObjectRequest.builder()
+                .bucket(bucket)
+                .key(filename)
+                .contentType(contentType)
+                .build();
 
-        s3Client.putObject(
-                PutObjectRequest.builder()
-                        .bucket(bucket)
-                        .key(key)
-                        .contentType(file.getContentType())
-                        .build(),
-                RequestBody.fromBytes(file.getBytes())
-        );
-        
-        // return the public URL
-        return "https://" + bucket + ".s3." + s3Config.getRegion() + ".amazonaws.com/" + key;
+        PutObjectPresignRequest presignRequest =
+                PutObjectPresignRequest.builder()
+                        .signatureDuration(Duration.ofMinutes(10))
+                        .putObjectRequest(request)
+                        .build();
+
+        return s3Presigner.presignPutObject(presignRequest)
+                .url()
+                .toString();
     }
 
-    public void deletePhoto(String photoUrl) {
-        // extract key from URL
-        String key = photoUrl.substring(photoUrl.indexOf("users/"));
+    public String generateGetPhotoUrl(String filename) {
+        log.info("Generating Presign URL to get photo");
 
+        GetObjectRequest getObjectRequest = GetObjectRequest.builder()
+                .bucket(bucket)
+                .key(filename)
+                .build();
+
+        GetObjectPresignRequest presignRequest =
+                GetObjectPresignRequest.builder()
+                        .signatureDuration(Duration.ofHours(1))
+                        .getObjectRequest(getObjectRequest)
+                        .build();
+
+        return s3Presigner.presignGetObject(presignRequest)
+                .url()
+                .toString();
+    }
+
+    public void deletePhoto(String key) {
+        log.info("Deleting photo");
+
+        if (key == null || key.isBlank()) {
+            return;
+        }
         s3Client.deleteObject(DeleteObjectRequest.builder()
                 .bucket(bucket)
                 .key(key)
                 .build());
     }
-
-    private String getExtension(MultipartFile file) {
-        String originalFilename = file.getOriginalFilename();
-        if (originalFilename != null && originalFilename.contains(".")) {
-            return originalFilename.substring(originalFilename.lastIndexOf("."));
-        }
-        return ".jpg";
-    }
-
 }

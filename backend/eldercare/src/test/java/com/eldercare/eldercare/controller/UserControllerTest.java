@@ -15,6 +15,7 @@ import org.springframework.security.core.Authentication;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -74,9 +75,9 @@ class UserControllerTest {
     @Test
     public void update_passesRequesterIdFromAuth() {
         UUID id = UUID.randomUUID();
-        UpdateUserRequest req = new UpdateUserRequest("marie", null, null, "000");
+        UpdateUserRequest req = new UpdateUserRequest("marie", null, "000");
         UserDto dto = userDto(id);
-        when(authentication.getPrincipal()).thenReturn(id);
+        when(Objects.requireNonNull(authentication.getPrincipal())).thenReturn(id);
         when(userService.update(id, id, req)).thenReturn(dto);
 
         UserDto result = victim.update(id, req, authentication);

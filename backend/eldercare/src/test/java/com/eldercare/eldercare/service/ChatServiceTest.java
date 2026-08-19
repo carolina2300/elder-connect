@@ -43,9 +43,6 @@ class ChatServiceTest {
     @Mock
     UserRepository userRepository;
 
-    @Mock
-    KafkaEmailProducer kafkaEmailProducer;
-
     @InjectMocks
     ChatService victim;
 
@@ -188,11 +185,10 @@ class ChatServiceTest {
         verify(conversationRepository).findById(convId);
         verify(userRepository).getReferenceById(senderId);
         verify(messageRepository).save(captor.capture());
-        verify(kafkaEmailProducer).sendEmailNotification(new EmailNotificationEvent("receiver@email","Sender"));
         assertEquals("new message", captor.getValue().getBody());
         assertEquals(senderId, result.senderId());
         assertEquals("new message", result.body());
-        verifyNoMoreInteractions(messageRepository, kafkaEmailProducer, conversationRepository, userRepository);
+        verifyNoMoreInteractions(messageRepository, conversationRepository, userRepository);
     }
 
     @Test
@@ -213,7 +209,6 @@ class ChatServiceTest {
 
         ArgumentCaptor<Message> captor = ArgumentCaptor.forClass(Message.class);
         verify(messageRepository).save(captor.capture());
-        verifyNoInteractions(kafkaEmailProducer);
         assertEquals("new message", captor.getValue().getBody());
         assertEquals(senderId, result.senderId());
         assertEquals("new message", result.body());

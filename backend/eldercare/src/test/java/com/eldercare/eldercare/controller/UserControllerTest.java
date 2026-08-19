@@ -77,7 +77,7 @@ class UserControllerTest {
         UUID id = UUID.randomUUID();
         UpdateUserRequest req = new UpdateUserRequest("marie", null, "000");
         UserDto dto = userDto(id);
-        when(Objects.requireNonNull(authentication.getPrincipal())).thenReturn(id);
+        when(authentication.getPrincipal()).thenReturn(id);
         when(userService.update(id, id, req)).thenReturn(dto);
 
         UserDto result = victim.update(id, req, authentication);

@@ -18,6 +18,7 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -25,6 +26,9 @@ class UserServiceTest {
 
     @Mock
     UserRepository userRepository;
+
+    @Mock
+    StorageService storageService;
 
     @InjectMocks
     UserService victim;
@@ -47,6 +51,7 @@ class UserServiceTest {
                         .email("test@email.com")
                 .build());
         when(userRepository.findAll()).thenReturn(users);
+        when(storageService.generateGetPhotoUrl(any())).thenReturn(null);
 
         List<UserDto> result = victim.findAll();
 
@@ -70,6 +75,7 @@ class UserServiceTest {
                         .build()
                 );
         when(userRepository.findAll()).thenReturn(users);
+        when(storageService.generateGetPhotoUrl(any())).thenReturn(null);
 
         List<UserDto> result = victim.findAll();
 
@@ -89,6 +95,7 @@ class UserServiceTest {
                 .build();
 
         when(userRepository.findById(id)).thenReturn(Optional.of(user));
+        when(storageService.generateGetPhotoUrl(any())).thenReturn(null);
 
         Optional<UserDto> result = victim.findById(id);
 
@@ -115,14 +122,10 @@ class UserServiceTest {
                 .phoneNumber("000")
                 .build();
         when(userRepository.save(user)).thenReturn(userUpdated);
-
+        when(storageService.generateGetPhotoUrl(any())).thenReturn(null);
 
         UpdateUserRequest req = new UpdateUserRequest("marie", null, "000");
 
         UserDto result = victim.update(id, id, req);
-
-
-
-
     }
 }

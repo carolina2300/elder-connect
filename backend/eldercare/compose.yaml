@@ -22,6 +22,28 @@ services:
     ports:
       - "9092:9092"
 
+  app:
+    image: eldercare:latest
+    container_name: eldercare-app
+    ports:
+      - "8080:8080"
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/elder
+      DB_USERNAME: admin
+      DB_PASSWORD: admin
+      MAIL_PASSWORD:
+      JWT_SECRET:
+      AWS_ACCESS_KEY:
+      AWS_SECRET_KEY:
+    depends_on:
+      postgres:
+        condition: service_started
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
 
 volumes:
   postgres_data:

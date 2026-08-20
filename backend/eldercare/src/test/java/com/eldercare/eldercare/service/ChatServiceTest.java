@@ -43,6 +43,9 @@ class ChatServiceTest {
     @Mock
     UserRepository userRepository;
 
+    @Mock
+    EmailService emailService;
+
     @InjectMocks
     ChatService victim;
 
@@ -167,24 +170,46 @@ class ChatServiceTest {
 
     @Test
     public void sendFirstMessage_savesAndReturnsDto() {
-        UUID convId = UUID.randomUUID();
+        // Arrange - set up users
         UUID senderId = UUID.randomUUID();
-        Conversation c = conversation(convId, userWithIdNameEmail(senderId, "Sender", "sender@email"), userWithIdNameEmail(UUID.randomUUID(), "Receiver", "receiver@email"));
-        when(conversationRepository.findById(convId)).thenReturn(Optional.of(c));
-        when(userRepository.getReferenceById(senderId)).thenReturn(userWithId(senderId));
+        UUID recipientId = UUID.randomUUID();
+
+        User sender = new User();
+        sender.setId(senderId);
+        sender.setName("Carolina");
+        sender.setEmail("carolina@test.com");
+
+        User recipient = new User();
+        recipient.setId(recipientId);
+        recipient.setName("Test User");
+        recipient.setEmail("recipient@test.com");
+
+        // set up conversation
+        UUID conversationId = UUID.randomUUID();
+        Conversation conversation = new Conversation();
+        conversation.setId(conversationId);
+        conversation.setParticipantA(sender);
+        conversation.setParticipantB(recipient);
+
+        when(conversationRepository.findById(conversationId)).thenReturn(Optional.of(conversation));
+        when(userRepository.getReferenceById(senderId)).thenReturn(sender);
         when(messageRepository.save(any(Message.class))).thenAnswer(invocation -> {
             Message m = invocation.getArgument(0);
             m.setId(UUID.randomUUID());
             return m;
         });
-        when(messageRepository.countByConversation_Id(convId)).thenReturn(0L);
+        when(messageRepository.countByConversation_Id(conversationId)).thenReturn(0L); //first meessage
 
-        MessageDto result = victim.sendMessage(convId, senderId, "new message");
+        MessageDto result = victim.sendMessage(conversationId, senderId, "new message");
 
         ArgumentCaptor<Message> captor = ArgumentCaptor.forClass(Message.class);
-        verify(conversationRepository).findById(convId);
+        verify(conversationRepository).findById(conversationId);
         verify(userRepository).getReferenceById(senderId);
+        verify(emailService).sendNewMessageNotification(
+                recipient.getEmail(), sender.getName()
+        );
         verify(messageRepository).save(captor.capture());
+
         assertEquals("new message", captor.getValue().getBody());
         assertEquals(senderId, result.senderId());
         assertEquals("new message", result.body());

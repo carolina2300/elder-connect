@@ -29,6 +29,8 @@ public class ChatService {
     private final ConversationRepository conversationRepository;
     private final MessageRepository messageRepository;
     private final UserRepository userRepository;
+    //private final KafkaEmailProducer kafkaEmailProducer;
+    private final EmailService emailService;
 
     @Transactional
     public ConversationSummaryDto openConversation(UUID requesterId, UUID otherUserId) {
@@ -64,6 +66,7 @@ public class ChatService {
                 .toList();
     }
 
+
     @Transactional
     public MessageDto sendMessage(UUID conversationId, UUID senderId, String body) {
         Conversation conversation = conversationRepository.findById(conversationId)
@@ -76,7 +79,26 @@ public class ChatService {
 
         // check if first message. Query MessageRepository
         if (messageRepository.countByConversation_Id(conversationId) == 0) {
-            log.info("First message in conversation {}.", conversationId);
+
+            log.info("First message in conversation {}. Publishing email notification in Kafka.",
+                    conversationId);
+
+            User recipient = conversation.getParticipantA().getId().equals(senderId)
+                    ? conversation.getParticipantB()
+                    : conversation.getParticipantA();
+
+            User sender = conversation.getParticipantA().getId().equals(senderId)
+                    ? conversation.getParticipantA()
+                    : conversation.getParticipantB();
+
+            emailService.sendNewMessageNotification(recipient.getEmail(), sender.getName());
+
+            /*kafkaEmailProducer.sendEmailNotification(
+                    new EmailNotificationEvent(
+                            recipient.getEmail(),
+                            sender.getName()
+                    )
+            );*/
         }
         MessageDto messageDto = toMessageDto(messageRepository.save(message));
         log.info("Message {} sent in conversation {}", message.getId(), conversationId);

@@ -2,6 +2,7 @@ package com.eldercare.eldercare.config;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,33 +14,52 @@ import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 
 @Getter
 @Configuration
+@RequiredArgsConstructor
 public class S3Config {
+
+    private final FeatureFlags featureFlags;
+
+    @Value("${AWS_ACCESS_KEY_ID:}")
+    private String accessKeyId;
+
+    @Value("${AWS_SECRET_ACCESS_KEY:}")
+    private String secretAccessKey;
+
     @Value("${aws.s3.region}")
     private String region;
 
-    @Value("${aws.accessKeyId}")
-    private String accessKeyId;
-
-    @Value("${aws.secretAccessKey}")
-    private String secretAccessKey;
-
     @Bean
     public S3Client s3Client() {
-        return S3Client.builder()
-                .region(Region.of(region))
-                .credentialsProvider(StaticCredentialsProvider.create(
-                        AwsBasicCredentials.create(accessKeyId, secretAccessKey)
-                ))
-                .build();
+        if(featureFlags.isUseAwsLambda()){
+            return S3Client.builder()
+                    .region(Region.of(region))
+                    .build();
+        }
+        else {
+            return S3Client.builder()
+                    .region(Region.of(region))
+                    .credentialsProvider(StaticCredentialsProvider.create(
+                            AwsBasicCredentials.create(accessKeyId, secretAccessKey)
+                    ))
+                    .build();
+        }
     }
 
     @Bean
     public S3Presigner s3Presigner() {
-        return S3Presigner.builder()
-                .region(Region.of(region))
-                .credentialsProvider(StaticCredentialsProvider.create(
-                        AwsBasicCredentials.create(accessKeyId, secretAccessKey)
-                ))
-                .build();
+        if(featureFlags.isUseAwsLambda()){
+            return S3Presigner.builder()
+                    .region(Region.of(region))
+                    .credentialsProvider(StaticCredentialsProvider.create(
+                            AwsBasicCredentials.create(accessKeyId, secretAccessKey)
+                    ))
+                    .build();
+        }
+        else {
+            return S3Presigner.builder()
+                    .region(Region.of(region))
+                    .build();
+        }
+
     }
 }

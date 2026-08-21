@@ -3,9 +3,9 @@ spring:
     name: eldercare
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/elder
-    username: admin
-    password: admin
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/elder}
+    username: ${DB_USERNAME:admin}
+    password: ${DB_PASSWORD:admin}
     driver-class-name: org.postgresql.Driver
 
   liquibase:
@@ -13,6 +13,7 @@ spring:
     enabled: true
 
   jpa:
+    open-in-view: false
     hibernate:
       ddl-auto: validate
     show-sql: false
@@ -23,8 +24,8 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: cuidado.senior.pt@gmail.com
-    password:
+    username: ${MAIL_USERNAME:cuidado.senior.pt@gmail.com}
+    password: ${MAIL_PASSWORD:wixs cyga pxyz stqo}
     properties:
       mail:
         smtp:
@@ -36,7 +37,7 @@ spring:
     bootstrap-servers: localhost:9092
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.springframework.kafka.support.serializer.JacksonJsonDeserializer
+      value-serializer: org.springframework.kafka.support.serializer.JacksonJsonSerializer
     consumer:
       group-id: email-service
       auto-offset-reset: earliest
@@ -50,14 +51,23 @@ spring:
 
 app:
   jwt:
-    secret: dGhpcy1pcy1hLXNlY3VyZS1zZWNyZXQta2V5LWZvci1lbGRlcmNhcmUtY29ubmVjdA==
+    secret: ${JWT_SECRET:dGhpcy1pcy1hLXNlY3VyZS1zZWNyZXQta2V5LWZvci1lbGRlcmNhcmUtY29ubmVjdA==}
     expiration-ms: 86400000
 
 aws:
   s3:
-    bucket: eldercare-photos-905418127186-eu-west-1-an
-    region: eu-west-1
-  accessKeyId:
-  secretAccessKey:
+    bucket: ${AWS_S3_BUCKET:eldercare-photos-905418127186-eu-west-1-an}
+    region: ${AWS_S3_REGION:eu-west-1}
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: never
 
+features:
+  use-kafka-for-emails: ${FEATURES_USE_KAFKA_FOR_EMAILS:true}
+  use-aws-lambda: ${FEATURES_USE_AWS_LAMBDA:false}

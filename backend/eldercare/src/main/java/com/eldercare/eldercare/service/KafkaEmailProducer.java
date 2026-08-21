@@ -2,13 +2,19 @@ package com.eldercare.eldercare.service;
 
 import com.eldercare.eldercare.model.EmailNotificationEvent;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
+@ConditionalOnProperty(
+        name = "features.use-kafka-for-emails",
+        havingValue = "true"
+)
 public class KafkaEmailProducer {
     private final KafkaTemplate<String, EmailNotificationEvent> kafkaTemplate;
+
 
     public KafkaEmailProducer(
             KafkaTemplate<String, EmailNotificationEvent> kafkaTemplate) {

@@ -69,4 +69,5 @@ management:
       show-details: never
 
 features:
-  use-kafka-for-emails: ${FEATURES_USE_KAFKA_FOR_EMAILS:false}
+  use-kafka-for-emails: ${FEATURES_USE_KAFKA_FOR_EMAILS:true}
+  use-aws-lambda: ${FEATURES_USE_AWS_LAMBDA:false}

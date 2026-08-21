@@ -9,4 +9,5 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "features")
 public class FeatureFlags {
     private boolean useKafkaForEmails = false;
+    private boolean useAwsLambda = false;
 }

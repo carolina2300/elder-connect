@@ -1,5 +1,6 @@
 package com.eldercare.eldercare.service;
 
+import com.eldercare.eldercare.config.FeatureFlags;
 import com.eldercare.eldercare.dto.ConversationSummaryDto;
 import com.eldercare.eldercare.dto.MessageDto;
 import com.eldercare.eldercare.dto.UserDto;
@@ -13,6 +14,7 @@ import com.eldercare.eldercare.repository.MessageRepository;
 import com.eldercare.eldercare.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,8 +31,9 @@ public class ChatService {
     private final ConversationRepository conversationRepository;
     private final MessageRepository messageRepository;
     private final UserRepository userRepository;
-    //private final KafkaEmailProducer kafkaEmailProducer;
+    private final ObjectProvider<KafkaEmailProducer> kafkaEmailProducer;
     private final EmailService emailService;
+    private final FeatureFlags featureFlags;
 
     @Transactional
     public ConversationSummaryDto openConversation(UUID requesterId, UUID otherUserId) {
@@ -91,14 +94,18 @@ public class ChatService {
                     ? conversation.getParticipantA()
                     : conversation.getParticipantB();
 
-            emailService.sendNewMessageNotification(recipient.getEmail(), sender.getName());
 
-            /*kafkaEmailProducer.sendEmailNotification(
-                    new EmailNotificationEvent(
-                            recipient.getEmail(),
-                            sender.getName()
-                    )
-            );*/
+            if(featureFlags.isUseKafkaForEmails()){
+                kafkaEmailProducer.getObject().sendEmailNotification(
+                        new EmailNotificationEvent(
+                                recipient.getEmail(),
+                                sender.getName()
+                        )
+                );
+            }
+            else {
+                emailService.sendNewMessageNotification(recipient.getEmail(), sender.getName());
+            }
         }
         MessageDto messageDto = toMessageDto(messageRepository.save(message));
         log.info("Message {} sent in conversation {}", message.getId(), conversationId);

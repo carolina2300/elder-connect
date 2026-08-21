@@ -25,7 +25,7 @@ spring:
     host: smtp.gmail.com
     port: 587
     username: ${MAIL_USERNAME:cuidado.senior.pt@gmail.com}
-    password: ${MAIL_PASSWORD:}
+    password: ${MAIL_PASSWORD:wixs cyga pxyz stqo}
     properties:
       mail:
         smtp:
@@ -33,30 +33,30 @@ spring:
           starttls:
             enable: true
 
-  # kafka:
-  #   bootstrap-servers: localhost:9092
-  #   producer:
-  #     key-serializer: org.apache.kafka.common.serialization.StringSerializer
-  #     value-serializer: org.springframework.kafka.support.serializer.JacksonJsonDeserializer
-  #   consumer:
-  #     group-id: email-service
-  #     auto-offset-reset: earliest
-  #     key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-  #     value-deserializer: org.springframework.kafka.support.serializer.JacksonJsonDeserializer
-  #     properties:
-  #       spring:
-  #         json:
-  #           trusted:
-  #             packages: "*"
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JacksonJsonSerializer
+    consumer:
+      group-id: email-service
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JacksonJsonDeserializer
+      properties:
+        spring:
+          json:
+            trusted:
+              packages: "*"
 
 app:
   jwt:
-    secret: ${JWT_SECRET}
+    secret: ${JWT_SECRET:dGhpcy1pcy1hLXNlY3VyZS1zZWNyZXQta2V5LWZvci1lbGRlcmNhcmUtY29ubmVjdA==}
     expiration-ms: 86400000
 
 aws:
   s3:
-    bucket: ${AWS_S3_BUCKET}
+    bucket: ${AWS_S3_BUCKET:eldercare-photos-905418127186-eu-west-1-an}
     region: ${AWS_S3_REGION:eu-west-1}
 
 management:
@@ -67,3 +67,6 @@ management:
   endpoint:
     health:
       show-details: never
+
+features:
+  use-kafka-for-emails: ${FEATURES_USE_KAFKA_FOR_EMAILS:false}

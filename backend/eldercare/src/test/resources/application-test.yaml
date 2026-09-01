@@ -1,0 +1,25 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/elder
+    username: admin
+    password: admin
+
+  kafka:
+    listener:
+      auto-startup: false
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+
+features:
+  use-kafka-for-emails: false
+  use-aws-lambda: false
+
+AWS_ACCESS_KEY_ID: test
+AWS_SECRET_ACCESS_KEY: test
+
+app:
+  jwt:
+    secret: dGhpcy1pcy1hLXNlY3VyZS1zZWNyZXQta2V5LWZvci1lbGRlcmNhcmUtY29ubmVjdA==
+    expiration-ms: 86400000
